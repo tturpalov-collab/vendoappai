@@ -13,3 +13,6 @@ analytics/out/*
 .DS_Store
 __pycache__/
 *.pyc
+
+# отчёты разведки
+analytics/vendo_payments_report.txt
