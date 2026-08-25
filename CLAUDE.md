@@ -35,6 +35,24 @@ ssh -L 54322:vendo-app.cvwxd0jliglu.eu-central-1.rds.amazonaws.com:5432 ec2-user
 - `analytics/sql/01_table_detail.sql` — колонки/индексы/примеры строк:
   `./analytics/db.sh -v tbl=public.payments -f sql/01_table_detail.sql`
 
+## Если нет psql
+
+`psql` на машине может отсутствовать (Homebrew недоступен из-за сетевых
+ограничений — `raw.githubusercontent.com` режется). Не заставляйте пользователя
+что-то ставить руками: разберитесь сами.
+
+Порядок предпочтений:
+
+1. `psql` — проверить `command -v psql`, а также
+   `/Applications/Postgres.app/Contents/Versions/latest/bin/psql`.
+2. Python + `psycopg`: `python3 -m pip install --user "psycopg[binary]"`
+   (pypi.org обычно доступен). Туннель поднимается тем же `analytics/tunnel.sh`,
+   а запросы идут через `psycopg.connect(host="127.0.0.1", port=54322, ...)`,
+   параметры берутся из `analytics/.env`.
+
+Во втором случае положите тонкую обёртку в `analytics/query.py`, чтобы
+дальнейшие запросы шли одной командой, и обновите этот раздел.
+
 ## Порядок работы
 
 1. Схема базы пока не разобрана — начните с `00_discover.sql` и разберитесь,
