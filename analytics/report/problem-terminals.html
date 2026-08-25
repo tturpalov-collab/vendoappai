@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Problem Terminals — August 2026</title>
+<style>
+@page { size: A4; margin: 15mm 14mm 13mm; }
+
+*{ box-sizing:border-box; }
+body{
+  margin:0; background:#fff; color:#111;
+  font-family:"Helvetica Neue", Helvetica, Arial, "DejaVu Sans", sans-serif;
+  font-size:9.7pt; line-height:1.45;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+
+header{ border-bottom:2.2pt solid #111; padding-bottom:8pt; margin-bottom:13pt; }
+.eyebrow{ font-size:7.4pt; letter-spacing:.14em; text-transform:uppercase; color:#555; margin:0 0 4pt; }
+h1{ font-size:19pt; line-height:1.12; margin:0 0 6pt; letter-spacing:-.01em; }
+.sub{ font-size:9.8pt; color:#333; margin:0; max-width:158mm; }
+.docmeta{ display:flex; gap:15pt; flex-wrap:wrap; margin-top:8pt; font-size:8pt; color:#555; }
+.docmeta b{ color:#111; font-weight:600; }
+
+section{ margin-top:15pt; }
+h2{ font-size:12.4pt; margin:0 0 4pt; letter-spacing:-.01em; }
+h2 .num{ font-family:"Courier New",monospace; font-size:9pt; color:#777; margin-right:6pt; }
+h3{ font-size:9.4pt; margin:11pt 0 3pt; letter-spacing:.02em; }
+p{ margin:0 0 6pt; max-width:168mm; }
+.lead{ color:#333; }
+
+table{ width:100%; border-collapse:collapse; font-size:8.7pt; margin:6pt 0 4pt; }
+th{
+  text-align:left; font-size:7pt; letter-spacing:.07em; text-transform:uppercase;
+  color:#444; font-weight:600; border-bottom:1pt solid #111; padding:4pt 5pt; background:#f2f2f2;
+}
+td{ padding:4.5pt 5pt; border-bottom:0.6pt solid #ccc; vertical-align:top; }
+td.n{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+td.op{ white-space:nowrap; font-size:8.3pt; }
+.sn{ font-family:"Courier New","DejaVu Sans Mono",monospace; font-size:8.9pt; font-weight:700; white-space:nowrap; }
+tr.hi td{ background:#fbeeed; }
+tr.mid td{ background:#fdf6e6; }
+
+code{ font-family:"Courier New","DejaVu Sans Mono",monospace; font-size:8.6pt; background:#f0f0f0; padding:0.5pt 3pt; }
+pre{
+  font-family:"Courier New","DejaVu Sans Mono",monospace; font-size:8.2pt; line-height:1.5;
+  background:#f6f6f6; border-left:2.2pt solid #999; padding:7pt 10pt; margin:5pt 0 7pt;
+  white-space:pre-wrap; overflow-wrap:anywhere;
+}
+
+.note{ border-left:2.4pt solid #b3261e; background:#fbeeed; padding:7pt 10pt; margin:7pt 0; font-size:9.2pt; }
+.note.calm{ border-left-color:#1f4d8f; background:#eef3fa; }
+.note.warn{ border-left-color:#8a5a00; background:#fdf6e6; }
+.note p{ margin:0; max-width:none; }
+.note b{ font-weight:700; }
+
+ul{ margin:4pt 0 7pt; padding-left:14pt; }
+li{ margin-bottom:3.5pt; }
+
+.ask{ font-size:9.2pt; margin-top:6pt; }
+.ask b{ font-weight:700; }
+
+footer{ margin-top:16pt; padding-top:8pt; border-top:0.8pt solid #999; font-size:7.7pt; color:#666; }
+footer p{ margin:0 0 3pt; max-width:170mm; }
+
+.pagebreak{ break-before:page; }
+.avoid{ break-inside:avoid; }
+h2, h3{ break-after:avoid; }
+table{ break-inside:avoid; }
+pre{ break-inside:avoid; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Technical findings &middot; Vendotek UAE &middot; 26 Aug 2026</p>
+  <h1>Problem Terminals — August 2026</h1>
+  <p class="sub">Eleven terminals show payment failure patterns that the rest of the fleet does not. This note records what the payment data shows, what can already be ruled out from it, and what needs to be checked on the platform side.</p>
+  <div class="docmeta">
+    <span>Window <b>1&ndash;25 Aug 2026</b></span>
+    <span>Attempts <b>77 370</b></span>
+    <span>Fleet CE rate <b>0.52 %</b> (excl. terminal in §1)</span>
+    <span>Payments analysed <b>535 236</b> since May 2025</span>
+  </div>
+</header>
+
+<section class="avoid">
+  <h2><span class="num">§1</span>Terminal that has never authorised a payment</h2>
+  <p class="lead">Terminal <code>221400017033</code> has produced <b>792 payment attempts and 792 technical failures</b> over its entire recorded history. Not a single approval, ever. In August alone it accounts for 176 of the 576 connection errors in the whole company — 31&nbsp;%.</p>
+
+  <table>
+    <thead><tr><th style="width:28mm">Terminal</th><th style="width:26mm">Site</th><th style="width:34mm">Operator</th><th class="n">Attempts (Aug)</th><th class="n">CE (Aug)</th><th class="n">Lifetime attempts</th><th class="n">Lifetime approvals</th></tr></thead>
+    <tbody>
+      <tr class="hi"><td class="sn">221400017033</td><td>Dubai</td><td class="op">upay-general-trading</td><td class="n">176</td><td class="n">176</td><td class="n">792</td><td class="n">0</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>What the data rules out.</b> A 100&nbsp;% failure rate sustained across the entire lifetime is not radio coverage and not a flaky link — a weak signal produces an intermittent rate, not a constant one. Every failure carries <code>response_code = 'CE'</code>, meaning the terminal never received a host response at all, so the issuer never saw these transactions.</p>
+
+  <p class="ask"><b>Please check:</b> whether this terminal ID is registered and routable on the acquiring host; whether its TID/MID pair was ever provisioned; and whether the terminal's host address configuration matches the working units of the same operator.</p>
+</section>
+
+<section class="avoid">
+  <h2><span class="num">§2</span>Terminals with elevated connection-error rates</h2>
+  <p class="lead">Six terminals fail between 5&nbsp;% and 16&nbsp;% of attempts with <code>CE</code>. For comparison, the fleet baseline is 0.52&nbsp;% and the best-performing operator runs at 0.08&nbsp;%.</p>
+
+  <table>
+    <thead><tr><th style="width:28mm">Terminal</th><th style="width:40mm">Site</th><th style="width:34mm">Operator</th><th class="n">Attempts</th><th class="n">CE</th><th class="n">Rate</th></tr></thead>
+    <tbody>
+      <tr class="mid"><td class="sn">221400016790</td><td>&mdash;</td><td class="op">modern-vending</td><td class="n">184</td><td class="n">29</td><td class="n">15.8 %</td></tr>
+      <tr class="mid"><td class="sn">221400017027</td><td>Dubai</td><td class="op">upay-general-trading</td><td class="n">262</td><td class="n">38</td><td class="n">14.5 %</td></tr>
+      <tr><td class="sn">221400010886</td><td>&mdash;</td><td class="op">upay-general-trading</td><td class="n">183</td><td class="n">13</td><td class="n">7.1 %</td></tr>
+      <tr><td class="sn">221400017144</td><td>Dubai</td><td class="op">upay-general-trading</td><td class="n">414</td><td class="n">24</td><td class="n">5.8 %</td></tr>
+      <tr><td class="sn">221400014242</td><td>&mdash;</td><td class="op">upay-general-trading</td><td class="n">773</td><td class="n">43</td><td class="n">5.6 %</td></tr>
+      <tr><td class="sn">221400016440</td><td>Shangrilla Men Accommodation</td><td class="op">alameed</td><td class="n">117</td><td class="n">6</td><td class="n">5.1 %</td></tr>
+    </tbody>
+  </table>
+
+  <p>Four of the six belong to <code>upay-general-trading</code>, but that operator's fleet-wide rate is 1.99&nbsp;% — the elevation is concentrated in specific units, not spread across the operator. Failures are intermittent, which is consistent with link quality or host timeout behaviour rather than configuration.</p>
+
+  <p class="ask"><b>Please check:</b> host response timeout settings for these terminals against the fleet default, and whether their failures cluster in time (a shared upstream event) or are evenly distributed (a per-unit link problem). The raw timestamps are available on request.</p>
+</section>
+
+<section class="avoid">
+  <h2><span class="num">§3</span>Terminals that stopped transacting</h2>
+  <p class="lead">Four terminals were transacting normally and then stopped. In the two largest cases the terminal stopped reporting to the network within one to two days of its last sale.</p>
+
+  <table>
+    <thead><tr><th style="width:28mm">Terminal</th><th style="width:32mm">Site</th><th style="width:24mm">Last sale</th><th class="n">Days idle</th><th class="n">Lifetime payments</th><th style="width:26mm">Last seen online</th></tr></thead>
+    <tbody>
+      <tr class="mid"><td class="sn">221400016865</td><td>ASTER CEDAR</td><td>19 Jul 2026</td><td class="n">38</td><td class="n">1 807</td><td>20 Jul 2026</td></tr>
+      <tr class="mid"><td class="sn">221400017152</td><td>Bur Dubai</td><td>3 Jun 2026</td><td class="n">84</td><td class="n">1 688</td><td>5 Jun 2026</td></tr>
+      <tr><td class="sn">221400016265</td><td>Al Ain Road</td><td>1 Jul 2026</td><td class="n">56</td><td class="n">449</td><td>no record</td></tr>
+      <tr><td class="sn">221400016179</td><td>Dubai</td><td>5 Dec 2025</td><td class="n">264</td><td class="n">233</td><td>5 Dec 2025</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>What the data suggests.</b> Sales and telemetry stopping together points to the unit losing power or being physically removed, rather than a software fault — a crashed application would normally keep the modem reporting. This is being verified on site; it is listed here so the pattern is on record and so the platform side can confirm whether anything was logged for these units around those dates.</p>
+
+  <p><code>221400016179</code> went silent on <b>5 December 2025</b>, the same date on which 306 not-yet-deployed units also stopped reporting. That may be a coincidence of a bulk intake event, or a shared cause worth a look.</p>
+</section>
+
+<section>
+  <h2><span class="num">§4</span>Data issues found while investigating</h2>
+  <p class="lead">Four items below are not terminal faults but properties of the data. They affect anyone computing metrics from these tables, so they are worth fixing at the source.</p>
+
+  <h3>4.1 &nbsp;Empty response code conflates two different events</h3>
+  <p>Of 27 792 payments with an empty <code>response_code</code>, roughly 26 400 are not payment attempts at all. They come from an amusement-park site where visitors tap their own MiFare balance cards on the vending POS by mistake. The terminal correctly rejects a non-payment card, but the event is stored indistinguishably from a genuine host failure.</p>
+  <p>The signature is clean and does not depend on the operator:</p>
+  <pre>pos_entry_mode = 'CONTACTLESS'      -- not 'EMV CONTACTLESS'
+  AND coalesce(aid, '') = ''
+  AND coalesce(pan, '') = ''         -- 26 065 rows, 98.7 % of all such events</pre>
+  <p>Genuine card payments always carry <code>EMV CONTACTLESS</code> or <code>QR CODE READ</code>. A dedicated flag for &ldquo;card is not a payment instrument&rdquo; would remove the ambiguity. Until then, company approve rate reads about 3&nbsp;points lower than reality.</p>
+
+  <h3>4.2 &nbsp;<code>vendotek_unit.last_seen_at</code> is in seconds, not milliseconds</h3>
+  <p>Unlike the millisecond epochs used elsewhere in the schema, this column stores epoch seconds. Dividing by 1000 yields January 1970 for 703 of 1 008 units. Worth either normalising the column or documenting it. The format of <code>vendotek_module.status_changed_at</code> has not been verified and may have the same issue.</p>
+
+  <h3>4.3 &nbsp;A test terminal is live in production data</h3>
+  <p>Terminal <code>221400017147</code>, named <code>IntersoftPOS Testing 5.4.2026</code>, produced 6 367 payments totalling 3 654 AED — an average of 0.57 AED. These are test runs sitting in the same tables as real sales and inflating transaction counts. A test/production flag would be more reliable than encoding it in the location name.</p>
+
+  <h3>4.4 &nbsp;Unexplained spike in empty response codes, June 2026</h3>
+  <p>In June, 1 142 empty response codes originated <i>outside</i> the amusement-park site — against 1 in May, 121 in July and 105 in August. They are spread across every operator (<code>modern-vending</code> 399, <code>tazizi</code> 338, <code>coffepoint</code> 98, and so on), which points to a platform-level event rather than a customer-side issue. The peak was the week of 22 June, with 1 848 empty codes in seven days. No cause has been identified.</p>
+  <div class="note warn"><p><b>This is the one open question in the report.</b> If anything was deployed, migrated or reconfigured in the week of 22 June 2026, that is the most likely place to look.</p></div>
+</section>
+
+<section class="avoid">
+  <h2><span class="num">§5</span>Context: the incident itself is closed</h2>
+  <p class="lead">Connection errors across the fleet have returned to their pre-incident level. This report is about the residue, not an ongoing outage.</p>
+
+  <table>
+    <thead><tr><th style="width:34mm">Month</th><th class="n">CE</th><th class="n">Decline rate, all</th><th class="n">Decline rate, excl. mis-taps</th></tr></thead>
+    <tbody>
+      <tr><td>February 2026 (pre-incident)</td><td class="n">45</td><td class="n">7.09 %</td><td class="n">3.33 %</td></tr>
+      <tr class="hi"><td>March 2026</td><td class="n">6 251</td><td class="n">27.47 %</td><td class="n">19.37 %</td></tr>
+      <tr class="hi"><td>April 2026</td><td class="n">10 932</td><td class="n">26.53 %</td><td class="n">21.73 %</td></tr>
+      <tr class="mid"><td>May 2026</td><td class="n">1 629</td><td class="n">12.48 %</td><td class="n">5.67 %</td></tr>
+      <tr class="mid"><td>June 2026</td><td class="n">2 496</td><td class="n">12.33 %</td><td class="n">8.20 %</td></tr>
+      <tr class="mid"><td>July 2026</td><td class="n">2 061</td><td class="n">10.40 %</td><td class="n">5.95 %</td></tr>
+      <tr><td>August 2026</td><td class="n">576</td><td class="n">6.59 %</td><td class="n">3.51 %</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note calm"><p><b>August is back to February.</b> 3.51&nbsp;% against 3.33&nbsp;% before the data-centre migration — a difference of 0.18 points. Weekly, CE fell from 847 at the peak on 15 June to 37 in the week of 17 August. The estimated shortfall over March–August is 330 684 AED across 23 919 failed purchases, of which August contributes 883 AED.</p></div>
+</section>
+
+<section class="avoid">
+  <h2><span class="num">§6</span>How these numbers were derived</h2>
+  <p class="lead">So the figures can be reproduced or challenged.</p>
+  <pre>-- payment amount (either column alone is zero for the other tender type)
+amount = coalesce(cash_amount, 0) + coalesce(cashless_amount, 0)
+
+-- operation time: pos_localtime_at, NOT synced_at
+--   synced_at is the mirror export timestamp; every row falls in 19-25 Aug 2026
+
+-- success: vendotek_payment.approved
+-- technical failure (terminal got no usable host response):
+response_code IN ('', 'CE', 'TO', '907', '909', '911')
+-- issuer decline: everything else, chiefly '116' insufficient funds
+
+-- joins are logical only; the schema declares no foreign keys
+vendotek_payment.vend_id             -> vendotek_vend.id
+vendotek_payment_cashless.payment_id -> vendotek_payment.id
+vendotek_vend.unit_id                -> vendotek_unit.id</pre>
+  <p>All figures exclude the MiFare mis-taps described in §4.1 unless stated otherwise. &ldquo;Attempts&rdquo; counts rows in <code>vendotek_payment</code>; &ldquo;CE&rdquo; counts <code>response_code = 'CE'</code> on the cashless detail row.</p>
+</section>
+
+<footer>
+  <p><b>CE (communication error)</b> is written by the terminal when the payment host does not respond within its timeout. The transaction does not reach the issuer, so neither the card nor the cardholder is involved in the failure.</p>
+  <p>Source: production payment tables, 535 236 payments from 6 May 2025 to 25 August 2026, currency AED. Terminal serial numbers are given as <code>vendotek_unit.sn</code>. Prepared for platform-side investigation; raw extracts for any line in this report are available on request.</p>
+</footer>
+
+</body>
+</html>
