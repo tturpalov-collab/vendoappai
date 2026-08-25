@@ -352,6 +352,57 @@ where f.ts >= '2026-06-01' and f.ts < '2026-07-01'
 group by 1 having count(*) filter (where not f.approved and f.code = '') > 0
 order by 2 desc limit 15"""
 
+# Признак развёрнутой машины — регулярные продажи, а не заполненный адрес.
+# Адрес в базе не заполняется системно: 86 % выручки идёт с машин без города.
+Q27 = """
+select case when per_day >= 20 then 'a. 20+ платежей в день — проходное место'
+            when per_day >= 5  then 'b. 5-20 — уверенно работает'
+            when per_day >= 1  then 'c. 1-5 — развёрнута'
+            when per_day > 0   then 'd. меньше 1 — эпизодические продажи'
+            else 'e. продаж за 30 дней нет' end as kind,
+       count(*) as units,
+       count(*) filter (where has_addr) as with_address,
+       round(100.0 * count(*) filter (where has_addr) / count(*), 0) as addr_pct,
+       round(sum(revenue), 0) as revenue_30d
+from (
+  select f.sn,
+         count(*) filter (where f.ts > (select max(ts) from fc) - interval '30 days') / 30.0 as per_day,
+         sum(f.amount) filter (where f.approved
+              and f.ts > (select max(ts) from fc) - interval '30 days') as revenue,
+         bool_or(coalesce(u.address,'') <> '') as has_addr
+  from fc f join vendotek_unit u on u.sn = f.sn
+  group by 1
+) t group by 1 order by 1"""
+
+Q28 = """
+select case when coalesce(u.address,'') <> '' then 'адрес есть' else 'адреса нет' end as addr,
+       case when coalesce(u.city,'') <> '' then 'город есть' else 'города нет' end as city,
+       count(*) as units,
+       round(sum(s.revenue), 0) as revenue
+from vendotek_unit u
+join (
+  select v.unit_id, sum(coalesce(p.cash_amount,0) + coalesce(p.cashless_amount,0))
+         filter (where p.approved) as revenue
+  from vendotek_payment p join vendotek_vend v on v.id = p.vend_id
+  group by 1
+) s on s.unit_id = u.id
+group by 1, 2 order by 4 desc nulls last"""
+
+Q29 = """
+select sn, per_day_30, round(revenue_30, 0) as revenue_30,
+       coalesce(nullif(address,''), '(нет)') as address
+from (
+  select f.sn,
+         round(count(*) filter (where f.ts > (select max(ts) from fc) - interval '30 days') / 30.0, 1) as per_day_30,
+         sum(f.amount) filter (where f.approved
+              and f.ts > (select max(ts) from fc) - interval '30 days') as revenue_30,
+         max(u.address) as address
+  from fc f join vendotek_unit u on u.sn = f.sn
+  group by 1
+) t
+where per_day_30 >= 1 and coalesce(address,'') = ''
+order by revenue_30 desc nulls last limit 20"""
+
 QUERIES = [
 
 ("1. ТОП-30 АВТОМАТОВ ПО ПОТЕРЯННОЙ ВЫРУЧКЕ", BASE + """
@@ -497,6 +548,11 @@ from (
 ("25. ДЛЯ СРАВНЕНИЯ: СКОЛЬКО МАШИН НА АДРЕС У РАБОТАЮЩИХ", Q25),
 
 ("26. ИЮНЬСКАЯ АНОМАЛИЯ: ПУСТЫЕ КОДЫ ВНЕ SOCO", BASE + Q26),
+("27. РАЗВЁРНУТОСТЬ ПО АКТИВНОСТИ: ПЛАТЕЖЕЙ В ДЕНЬ ЗА 30 ДНЕЙ", BASE + Q27),
+
+("28. ЗАПОЛНЕННОСТЬ АДРЕСА У МАШИН С ПРОДАЖАМИ", Q28),
+
+("29. РАБОТАЮТ КАЖДЫЙ ДЕНЬ, НО АДРЕСА НЕТ — ТОП-20 ПО ВЫРУЧКЕ", BASE + Q29),
 ]
 
 def main():
