@@ -1,0 +1,399 @@
+<title>Ошибки CE в августе</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f4f6f8; --surface:#ffffff; --surface-2:#eceff3;
+  --ink:#0f141b; --ink-2:#485462; --ink-3:#727f8e;
+  --rule:#dbe0e7; --rule-strong:#c3cad4; --accent:#1c5cab;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+  --crit:#d43b3a; --warn:#b57c00;
+  --crit-soft:#fbeceb; --warn-soft:#fbf3e0; --good-soft:#e7f6ef;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#0e1116; --surface:#161a21; --surface-2:#1e242c;
+    --ink:#eef1f5; --ink-2:#b3bdc9; --ink-3:#87919e;
+    --rule:#2a313a; --rule-strong:#3a434e; --accent:#5b9ceb;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+    --crit:#e66767; --warn:#c98500;
+    --crit-soft:#2c1a1a; --warn-soft:#2a2214; --good-soft:#152520;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#0e1116; --surface:#161a21; --surface-2:#1e242c;
+  --ink:#eef1f5; --ink-2:#b3bdc9; --ink-3:#87919e;
+  --rule:#2a313a; --rule-strong:#3a434e; --accent:#5b9ceb;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+  --crit:#e66767; --warn:#c98500;
+  --crit-soft:#2c1a1a; --warn-soft:#2a2214; --good-soft:#152520;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:940px;margin:0 auto;padding:0 24px 80px}
+
+.masthead{padding:52px 0 28px;border-bottom:2px solid var(--ink)}
+.eyebrow{
+  font-family:"IBM Plex Mono", ui-monospace, monospace;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px;
+}
+h1{font-size:clamp(32px,5.5vw,50px);line-height:1.05;letter-spacing:-.025em;font-weight:700;margin:0 0 16px;text-wrap:balance}
+.standfirst{font-size:clamp(16.5px,2vw,19px);line-height:1.5;color:var(--ink-2);max-width:58ch;margin:0}
+.meta{
+  display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:22px;
+  font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-3);
+}
+.meta b{color:var(--ink-2);font-weight:500}
+
+.kpis{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--rule);border:1px solid var(--rule);margin:36px 0 0;
+}
+.kpi{background:var(--surface);padding:17px 17px 19px}
+.kpi .lab{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:9px;
+}
+.kpi .val{font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .val.good{color:var(--s3)}
+.kpi .val.crit{color:var(--crit)}
+.kpi .sub{font-size:12.5px;color:var(--ink-3);margin-top:5px;line-height:1.35}
+
+section{margin-top:56px}
+.sec-head{display:flex;align-items:baseline;gap:13px;margin-bottom:6px;flex-wrap:wrap}
+.tag{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);
+  border:1px solid var(--rule-strong);border-radius:2px;padding:3px 7px;white-space:nowrap;
+}
+.tag.alarm{color:var(--crit);border-color:var(--crit)}
+.tag.ok{color:var(--s3);border-color:var(--s3)}
+h2{font-size:clamp(22px,3.2vw,29px);line-height:1.2;letter-spacing:-.02em;font-weight:600;margin:0;text-wrap:balance}
+.lede{font-size:16.5px;color:var(--ink-2);max-width:64ch;margin:13px 0 0}
+p{max-width:66ch}
+
+.card{background:var(--surface);border:1px solid var(--rule);padding:20px 20px 14px;margin-top:24px;position:relative}
+.card-title{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);margin:0 0 4px;
+}
+.card-note{font-size:13.5px;color:var(--ink-3);margin:10px 0 0;max-width:70ch}
+.chart{width:100%;overflow-x:auto}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.tip{
+  position:absolute;pointer-events:none;opacity:0;transition:opacity .1s;
+  background:var(--ink);color:var(--bg);padding:7px 10px;border-radius:3px;
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.5;
+  white-space:nowrap;z-index:9;transform:translate(-50%,-118%);
+}
+.tip b{font-weight:600}
+
+.callout{border-left:3px solid var(--crit);background:var(--crit-soft);padding:16px 20px;margin-top:24px}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.callout.good{border-left-color:var(--s3);background:var(--good-soft)}
+.callout p{margin:0;max-width:64ch;font-size:15.5px}
+.callout .big{font-size:25px;font-weight:600;letter-spacing:-.02em;display:block;margin-bottom:4px;font-variant-numeric:tabular-nums}
+
+.tbl-wrap{overflow-x:auto;margin-top:22px;border:1px solid var(--rule);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--rule);white-space:nowrap}
+th{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:500;background:var(--surface-2);
+}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+td.sn{font-family:"IBM Plex Mono",monospace;font-size:13px}
+tbody tr:last-child td{border-bottom:none}
+tr.tot td{font-weight:600;background:var(--surface-2)}
+tr.hot td{background:var(--crit-soft)}
+tr.warm td{background:var(--warn-soft)}
+
+.chip{
+  display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:2px;font-weight:500;
+}
+.chip.hot{background:var(--crit);color:#fff}
+.chip.warm{background:var(--warn);color:#fff}
+.chip.calm{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--rule-strong)}
+
+code{font-family:"IBM Plex Mono",monospace;font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:2px}
+strong{font-weight:600}
+
+.actions{counter-reset:step;margin-top:24px;display:grid;gap:13px}
+.act{background:var(--surface);border:1px solid var(--rule);border-top:2px solid var(--accent);padding:17px 19px}
+.act h4{margin:0 0 6px;font-size:15.5px;font-weight:600;display:flex;gap:10px;align-items:baseline}
+.act h4::before{counter-increment:step;content:counter(step);font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);font-weight:600}
+.act p{margin:0;font-size:14.5px;color:var(--ink-2)}
+
+footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink-3)}
+footer p{max-width:70ch;margin:0 0 8px}
+@media (max-width:640px){ .kpis{grid-template-columns:repeat(2,1fr)} }
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Отчёт по коду ответа CE · 1—25 августа 2026</p>
+  <h1>Ошибки CE в августе</h1>
+  <p class="standfirst">576 обрывов связи на 77 370 попыток оплаты. Против 10 932 в апреле — падение на 95 %. Почти треть того, что осталось, даёт один сломанный терминал.</p>
+  <div class="meta">
+    <span>Период <b>01.08 — 25.08.2026</b></span>
+    <span>Источник <b>vendotek_payment_cashless.response_code</b></span>
+    <span>Организаций с CE <b>11 из 16</b></span>
+  </div>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><div class="lab">Всего CE</div><div class="val">576</div><div class="sub">0,74 % всех попыток</div></div>
+  <div class="kpi"><div class="lab">К апрелю</div><div class="val good">−95 %</div><div class="sub">было 10 932</div></div>
+  <div class="kpi"><div class="lab">Один терминал</div><div class="val crit">176</div><div class="sub">31 % всех CE компании</div></div>
+  <div class="kpi"><div class="lab">Последняя неделя</div><div class="val good">22</div><div class="sub">против 847 в пике 15 июня</div></div>
+</div>
+
+<section>
+  <div class="sec-head"><span class="tag ok">Динамика</span><h2>Обрывы почти закончились</h2></div>
+  <p class="lede">CE — это код, который терминал ставит сам, когда не дождался ответа от хоста. К банку такая транзакция не доходит. После аварии дата-центра их было десять тысяч в месяц, сейчас — пять с половиной сотен.</p>
+
+  <div class="card">
+    <p class="card-title">CE по неделям, штук</p>
+    <div class="chart" id="c-week"></div>
+    <p class="card-note">Неделя 24 августа неполная — данные обрываются 25-го. Пик 15 июня — 847 обрывов за семь дней.</p>
+  </div>
+
+  <div class="callout good">
+    <p><span class="big">Апрель 10 932 → август 576</span>
+    А если смотреть по неделям, то с 847 в середине июня до 37 в неделю 17 августа — минус 96 %. Сетевые последствия переезда ЦОД закрыты, и это видно в цифрах.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag alarm">Организации</span><h2>Семь из десяти CE — у одного клиента</h2></div>
+  <p class="lede">Но доля обманчива: у <code>upay-general-trading</code> и самый большой парк, и сломанный терминал внутри. По <em>частоте</em> хуже всех выглядит <code>alameed</code>.</p>
+
+  <div class="card">
+    <p class="card-title">CE по организациям, штук</p>
+    <div class="chart" id="c-org"></div>
+    <p class="card-note">Справа — доля CE от попыток этой организации. Именно она, а не абсолютное число, показывает, у кого проблема.</p>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Организация</th><th class="n">Попыток</th><th class="n">CE</th><th class="n">Доля CE</th><th class="n">От всех CE</th><th>Оценка</th></tr></thead>
+      <tbody>
+        <tr class="hot"><td>upay-general-trading</td><td class="n">20 103</td><td class="n">401</td><td class="n">1,99 %</td><td class="n">69,6 %</td><td><span class="chip hot">сломан терминал</span></td></tr>
+        <tr class="warm"><td>alameed</td><td class="n">288</td><td class="n">12</td><td class="n">4,17 %</td><td class="n">2,1 %</td><td><span class="chip warm">худшая частота</span></td></tr>
+        <tr class="warm"><td>mania-trading</td><td class="n">188</td><td class="n">5</td><td class="n">2,66 %</td><td class="n">0,9 %</td><td><span class="chip warm">малый парк</span></td></tr>
+        <tr class="warm"><td>vendotek-uae</td><td class="n">1 059</td><td class="n">20</td><td class="n">1,89 %</td><td class="n">3,5 %</td><td><span class="chip warm">повышенная</span></td></tr>
+        <tr><td>ginco-general-trading</td><td class="n">4 708</td><td class="n">27</td><td class="n">0,57 %</td><td class="n">4,7 %</td><td><span class="chip calm">норма</span></td></tr>
+        <tr><td>awafi-vending</td><td class="n">3 499</td><td class="n">15</td><td class="n">0,43 %</td><td class="n">2,6 %</td><td><span class="chip calm">норма</span></td></tr>
+        <tr><td>modern-vending</td><td class="n">22 792</td><td class="n">79</td><td class="n">0,35 %</td><td class="n">13,7 %</td><td><span class="chip calm">норма</span></td></tr>
+        <tr><td>coffepoint</td><td class="n">2 859</td><td class="n">5</td><td class="n">0,17 %</td><td class="n">0,9 %</td><td><span class="chip calm">норма</span></td></tr>
+        <tr><td>tazizi</td><td class="n">12 069</td><td class="n">10</td><td class="n">0,08 %</td><td class="n">1,7 %</td><td><span class="chip calm">отлично</span></td></tr>
+        <tr><td>fuelup</td><td class="n">2 075</td><td class="n">1</td><td class="n">0,05 %</td><td class="n">0,2 %</td><td><span class="chip calm">отлично</span></td></tr>
+        <tr><td>soco-br-of-majid-al-futtaim</td><td class="n">5 898</td><td class="n">1</td><td class="n">0,02 %</td><td class="n">0,2 %</td><td><span class="chip calm">отлично</span></td></tr>
+        <tr class="tot"><td>Итого</td><td class="n">77 370</td><td class="n">576</td><td class="n">0,74 %</td><td class="n">100 %</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Пять организаций — <code>hayat-vending</code>, <code>rrr_vendohmatic</code>, <code>bevarabia</code>, <code>vendohmatic</code>, <code>sf-entertainment</code> — не дали в августе ни одного CE.</p>
+
+  <p>Отдельно стоит отметить <code>tazizi</code>: 12 069 попыток и всего 10 обрывов. Это второй по величине парк в выборке, и он показывает, каким должен быть нормальный уровень — <strong>0,08 %</strong>. На его фоне 1,99 % у upay выглядят не «средним по больнице», а конкретной поломкой.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag alarm">Терминалы</span><h2>Двадцать пять терминалов дают 89 % обрывов</h2></div>
+  <p class="lede">Из 576 ошибок 515 приходятся на 25 машин. Но и внутри этой группы всё неоднородно: у большинства CE единичные, а у шести доля обрывов выше 5 %.</p>
+
+  <div class="callout">
+    <p><span class="big">221400017033 — 176 обрывов из 176 попыток</span>
+    Сто процентов. Ни одной успешной оплаты ни в августе, ни за всю историю: 792 попытки, 792 технических отказа. Этот терминал не «плохо ловит связь» — он не работает вообще и отгоняет каждого подошедшего покупателя.</p>
+  </div>
+
+  <p>Если убрать его из расчёта, по всему остальному парку остаётся <strong>400 обрывов на 77 194 попытки — 0,52 %</strong>. Это уже фоновый уровень, с которым ничего делать не нужно.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Терминал</th><th>Точка</th><th>Организация</th><th class="n">Попыток</th><th class="n">CE</th><th class="n">Доля</th></tr></thead>
+      <tbody>
+        <tr class="hot"><td class="sn">221400017033</td><td>Dubai</td><td>upay</td><td class="n">176</td><td class="n">176</td><td class="n">100,0 %</td></tr>
+        <tr class="hot"><td class="sn">221400016790</td><td>—</td><td>modern-vending</td><td class="n">184</td><td class="n">29</td><td class="n">15,8 %</td></tr>
+        <tr class="hot"><td class="sn">221400017027</td><td>Dubai</td><td>upay</td><td class="n">262</td><td class="n">38</td><td class="n">14,5 %</td></tr>
+        <tr class="warm"><td class="sn">221400010886</td><td>—</td><td>upay</td><td class="n">183</td><td class="n">13</td><td class="n">7,1 %</td></tr>
+        <tr class="warm"><td class="sn">221400017144</td><td>Dubai</td><td>upay</td><td class="n">414</td><td class="n">24</td><td class="n">5,8 %</td></tr>
+        <tr class="warm"><td class="sn">221400014242</td><td>—</td><td>upay</td><td class="n">773</td><td class="n">43</td><td class="n">5,6 %</td></tr>
+        <tr class="warm"><td class="sn">221400016440</td><td>Shangrilla Men Acc.</td><td>alameed</td><td class="n">117</td><td class="n">6</td><td class="n">5,1 %</td></tr>
+        <tr><td class="sn">221400010888</td><td>—</td><td>upay</td><td class="n">326</td><td class="n">16</td><td class="n">4,9 %</td></tr>
+        <tr><td class="sn">221400016438</td><td>—</td><td>ginco</td><td class="n">425</td><td class="n">15</td><td class="n">3,5 %</td></tr>
+        <tr><td class="sn">221400010739</td><td>—</td><td>upay</td><td class="n">186</td><td class="n">6</td><td class="n">3,2 %</td></tr>
+        <tr><td class="sn">221400010768</td><td>—</td><td>upay</td><td class="n">697</td><td class="n">20</td><td class="n">2,9 %</td></tr>
+        <tr><td class="sn">221400017017</td><td>Habtoor</td><td>coffepoint</td><td class="n">180</td><td class="n">5</td><td class="n">2,8 %</td></tr>
+        <tr><td class="sn">221400016769</td><td>—</td><td>mania-trading</td><td class="n">188</td><td class="n">5</td><td class="n">2,7 %</td></tr>
+        <tr><td class="sn">221400016436</td><td>—</td><td>ginco</td><td class="n">374</td><td class="n">10</td><td class="n">2,7 %</td></tr>
+        <tr><td class="sn">221400010875</td><td>—</td><td>upay</td><td class="n">702</td><td class="n">15</td><td class="n">2,1 %</td></tr>
+        <tr><td class="sn">221400014005</td><td>Nabors Jafza</td><td>tazizi</td><td class="n">195</td><td class="n">4</td><td class="n">2,1 %</td></tr>
+        <tr><td class="sn">221400010887</td><td>—</td><td>upay</td><td class="n">402</td><td class="n">8</td><td class="n">2,0 %</td></tr>
+        <tr><td class="sn">221400010764</td><td>—</td><td>upay</td><td class="n">471</td><td class="n">9</td><td class="n">1,9 %</td></tr>
+        <tr><td class="sn">221400010864</td><td>MAF Ghaf Woods</td><td>tazizi</td><td class="n">343</td><td class="n">6</td><td class="n">1,7 %</td></tr>
+        <tr><td class="sn">221400016430</td><td>Aster Hospital Qusais</td><td>awafi</td><td class="n">1 027</td><td class="n">15</td><td class="n">1,5 %</td></tr>
+        <tr><td class="sn">221400010898</td><td>—</td><td>upay</td><td class="n">286</td><td class="n">4</td><td class="n">1,4 %</td></tr>
+        <tr><td class="sn">221400010833</td><td>—</td><td>upay</td><td class="n">723</td><td class="n">7</td><td class="n">1,0 %</td></tr>
+        <tr><td class="sn">221400016444</td><td>—</td><td>modern-vending</td><td class="n">2 418</td><td class="n">15</td><td class="n">0,6 %</td></tr>
+        <tr><td class="sn">221400016716</td><td>—</td><td>modern-vending</td><td class="n">3 971</td><td class="n">21</td><td class="n">0,5 %</td></tr>
+        <tr><td class="sn">221400016787</td><td>—</td><td>modern-vending</td><td class="n">2 975</td><td class="n">5</td><td class="n">0,2 %</td></tr>
+        <tr class="tot"><td>Топ-25</td><td></td><td></td><td></td><td class="n">515</td><td class="n">89 % всех CE</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="card-note" style="margin-top:12px">Оставшийся 61 обрыв размазан по терминалам с одной-тремя ошибками за месяц. Это шум, а не проблема.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag">Вывод</span><h2>Что с этим делать</h2></div>
+  <div class="actions">
+    <div class="act"><h4>Снять с линии <code>221400017033</code></h4>
+      <p>792 попытки, 792 отказа, ноль продаж за всю историю. Одна машина даёт 31 % всех обрывов компании. Пока она числится рабочей, она портит и статистику, и впечатление покупателей на своей точке.</p></div>
+    <div class="act"><h4>Проверить связь на шести терминалах</h4>
+      <p><code>221400016790</code> и <code>221400017027</code> с долей около 15 %, затем <code>221400010886</code>, <code>221400017144</code>, <code>221400014242</code> и <code>221400016440</code> в диапазоне 5—7 %. У всех остальных доля ниже 5 %, и трогать их не нужно.</p></div>
+    <div class="act"><h4>Взять <code>tazizi</code> за эталон</h4>
+      <p>12 069 попыток и 10 обрывов — 0,08 %. Если тот же тип связи и та же схема подключения применимы у upay, разница в двадцать раз объясняется не географией, а настройкой.</p></div>
+    <div class="act"><h4>Закрыть тему аварии</h4>
+      <p>Динамика по неделям не оставляет вопросов: 847 → 37. Возвращаться к последствиям переезда дата-центра больше не нужно, дальше это обычная эксплуатация отдельных машин.</p></div>
+  </div>
+</section>
+
+<footer>
+  <p>CE (communication error) — код, который терминал записывает сам, когда не получил ответа от хоста в отведённое время. Транзакция при этом до банка не доходит, и решение эмитента здесь ни при чём.</p>
+  <p>Данные: <code>vendotek_payment_cashless</code> в связке с <code>vendotek_payment</code>, <code>vendotek_vend</code> и <code>vendotek_unit</code>. Период считается по <code>pos_localtime_at</code> — локальному времени терминала. Выборка на 25.08.2026.</p>
+</footer>
+
+</div>
+
+<script>
+const RU = n => n.toLocaleString('ru-RU');
+const cs = getComputedStyle(document.documentElement);
+const C = k => cs.getPropertyValue(k).trim();
+
+function svgEl(tag, attrs){
+  const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function tipFor(host){
+  const t = document.createElement('div');
+  t.className = 'tip'; host.appendChild(t);
+  return {
+    show(x, y, html){ t.innerHTML = html; t.style.left = x+'px'; t.style.top = y+'px'; t.style.opacity = 1; },
+    hide(){ t.style.opacity = 0; }
+  };
+}
+
+function barChart(sel, data, opt){
+  const host = document.querySelector(sel), card = host.closest('.card'), tip = tipFor(card);
+  const W = 900, H = opt.height || 240, PL = 52, PR = 12, PT = 14, PB = 34;
+  const iw = W - PL - PR, ih = H - PT - PB;
+  const max = Math.max(...data.map(d => d.v));
+  const bw = iw / data.length;
+  const svg = svgEl('svg', {viewBox:`0 0 ${W} ${H}`, role:'img', 'aria-label':opt.aria || ''});
+  [0,1,2,3,4].forEach(i => {
+    const y = PT + ih - ih*i/4;
+    svg.appendChild(svgEl('line', {x1:PL, x2:W-PR, y1:y, y2:y, stroke:C('--rule'), 'stroke-width':1}));
+    const t = svgEl('text', {x:PL-9, y:y+4, 'text-anchor':'end', fill:C('--ink-3'),
+      'font-size':11, 'font-family':'IBM Plex Mono, monospace'});
+    t.textContent = RU(Math.round(max*i/4));
+    svg.appendChild(t);
+  });
+  data.forEach((d,i) => {
+    const x = PL + i*bw + bw*0.18, w = bw*0.64;
+    const h = ih * d.v / max, y = PT + ih - h;
+    svg.appendChild(svgEl('rect', {x, y, width:w, height:Math.max(h,1.5), rx:3, fill:d.color || C('--s1')}));
+    const hit = svgEl('rect', {x:PL + i*bw, y:PT, width:bw, height:ih, fill:'transparent'});
+    hit.addEventListener('mouseenter', () => {
+      const bb = card.getBoundingClientRect(), sb = svg.getBoundingClientRect();
+      tip.show((PL + i*bw + bw/2)/W*sb.width + (sb.left-bb.left), y/H*sb.height + (sb.top-bb.top), d.tip);
+    });
+    hit.addEventListener('mouseleave', () => tip.hide());
+    svg.appendChild(hit);
+    const t = svgEl('text', {x:PL + i*bw + bw/2, y:H-12, 'text-anchor':'middle',
+      fill:C('--ink-3'), 'font-size':10.5, 'font-family':'IBM Plex Mono, monospace'});
+    t.textContent = d.l;
+    svg.appendChild(t);
+  });
+  host.appendChild(svg);
+}
+
+function hBar(sel, data, opt){
+  const host = document.querySelector(sel), card = host.closest('.card'), tip = tipFor(card);
+  const rowH = opt.rowH || 30, PL = opt.labelW || 210, PR = opt.rightW || 150;
+  const W = 900, H = data.length * rowH + 10, iw = W - PL - PR;
+  const max = Math.max(...data.map(d => d.v));
+  const svg = svgEl('svg', {viewBox:`0 0 ${W} ${H}`, role:'img', 'aria-label':opt.aria || ''});
+  data.forEach((d,i) => {
+    const y = i*rowH + 5, bh = rowH - 12, w = Math.max(iw * d.v / max, 2);
+    const lab = svgEl('text', {x:PL-12, y:y + bh/2 + 4, 'text-anchor':'end', fill:C('--ink-2'),
+      'font-size':12.5, 'font-family':'IBM Plex Mono, monospace'});
+    lab.textContent = d.l;
+    svg.appendChild(lab);
+    svg.appendChild(svgEl('rect', {x:PL, y, width:w, height:bh, rx:3, fill:d.color || C('--s1')}));
+    const val = svgEl('text', {x:PL + w + 9, y:y + bh/2 + 4, fill:C('--ink-2'),
+      'font-size':12, 'font-family':'IBM Plex Mono, monospace'});
+    val.textContent = d.r;
+    svg.appendChild(val);
+    const hit = svgEl('rect', {x:0, y:y-3, width:W, height:rowH, fill:'transparent'});
+    hit.addEventListener('mouseenter', () => {
+      const bb = card.getBoundingClientRect(), sb = svg.getBoundingClientRect();
+      tip.show((PL + w/2)/W*sb.width + (sb.left-bb.left), y/H*sb.height + (sb.top-bb.top), d.tip);
+    });
+    hit.addEventListener('mouseleave', () => tip.hide());
+    svg.appendChild(hit);
+  });
+  host.appendChild(svg);
+}
+
+barChart('#c-week', [
+  ['01.06',535],['08.06',554],['15.06',847],['22.06',484],['29.06',491],
+  ['06.07',806],['13.07',333],['20.07',366],['27.07',210],
+  ['03.08',259],['10.08',189],['17.08',37],['24.08',22]
+].map(([l,v],i) => ({
+  l, v,
+  color: i >= 9 ? C('--s3') : C('--s1'),
+  tip:`<b>неделя ${l}</b><br>${RU(v)} обрывов` + (i === 12 ? '<br>неделя неполная' : '')
+})), {height:250, aria:'CE по неделям'});
+
+hBar('#c-org', [
+  {l:'upay-general-trading', v:401, r:'401 · 1,99 % попыток', color:C('--crit'),
+   tip:'<b>upay-general-trading</b><br>401 CE из 20 103 попыток<br>из них 176 — один терминал'},
+  {l:'modern-vending', v:79, r:'79 · 0,35 %', color:C('--s1'),
+   tip:'<b>modern-vending</b><br>79 CE из 22 792 попыток<br>самый большой парк, доля низкая'},
+  {l:'ginco-general-trading', v:27, r:'27 · 0,57 %', color:C('--s1'),
+   tip:'<b>ginco-general-trading</b><br>27 CE из 4 708 попыток'},
+  {l:'vendotek-uae', v:20, r:'20 · 1,89 %', color:C('--warn'),
+   tip:'<b>vendotek-uae</b><br>20 CE из 1 059 попыток<br>доля повышенная'},
+  {l:'awafi-vending', v:15, r:'15 · 0,43 %', color:C('--s1'),
+   tip:'<b>awafi-vending</b><br>15 CE из 3 499 попыток'},
+  {l:'alameed', v:12, r:'12 · 4,17 % ← худшая доля', color:C('--warn'),
+   tip:'<b>alameed</b><br>12 CE из 288 попыток<br>самая высокая частота обрывов'},
+  {l:'tazizi', v:10, r:'10 · 0,08 % ← эталон', color:C('--s3'),
+   tip:'<b>tazizi</b><br>10 CE из 12 069 попыток<br>образцовый уровень'},
+  {l:'coffepoint', v:5, r:'5 · 0,17 %', color:C('--s1'),
+   tip:'<b>coffepoint</b><br>5 CE из 2 859 попыток'},
+  {l:'mania-trading', v:5, r:'5 · 2,66 %', color:C('--warn'),
+   tip:'<b>mania-trading</b><br>5 CE из 188 попыток'},
+  {l:'fuelup', v:1, r:'1 · 0,05 %', color:C('--s3'),
+   tip:'<b>fuelup</b><br>1 CE из 2 075 попыток'},
+  {l:'soco-br-of-majid…', v:1, r:'1 · 0,02 %', color:C('--s3'),
+   tip:'<b>soco-br-of-majid-al-futtaim</b><br>1 CE из 5 898 попыток'}
+], {rowH:32, labelW:200, rightW:210, aria:'CE по организациям'});
+</script>
