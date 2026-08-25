@@ -133,7 +133,10 @@ def connect(driver, password, dbname=None):
 def q(cur, sql, args=None, limit=None):
     """Безопасный SELECT: ошибка не роняет отчёт."""
     try:
-        cur.execute(sql, args or ())
+        if args:
+            cur.execute(sql, args)
+        else:
+            cur.execute(sql)          # без args, иначе '%' в литералах ломает парсер
         rows = cur.fetchall()
         return rows[:limit] if limit else rows
     except Exception as e:
