@@ -319,6 +319,39 @@ select count(*) as soco_empty_all_time,
                                  where not approved and code = ''), 1) as share_of_all_empty
 from fc where not approved and code = '' and org = {SOCO}"""
 
+Q24 = """
+select coalesce(nullif(u.address, ''), '(адреса нет)') as address,
+       count(*) as units,
+       to_char(max(to_timestamp(case when u.last_seen_at > 100000000000 then u.last_seen_at/1000.0 else u.last_seen_at end)), 'YYYY-MM-DD') as last_seen
+from vendotek_unit u
+where not exists (select 1 from vendotek_vend v where v.unit_id = u.id)
+  and to_timestamp(case when u.last_seen_at > 100000000000 then u.last_seen_at/1000.0 else u.last_seen_at end) > now() - interval '30 days'
+group by 1 order by 2 desc limit 25"""
+
+Q25 = """
+select case when units_at_address = 1 then 'a. 1 автомат — точка'
+            when units_at_address <= 3 then 'b. 2-3 — небольшая площадка'
+            when units_at_address <= 10 then 'c. 4-10 — крупная площадка'
+            else 'd. 11+ — похоже на склад или депо' end as kind,
+       count(*) as addresses,
+       sum(units_at_address) as units
+from (
+  select coalesce(nullif(u.address, ''), '(нет)') as a, count(*) as units_at_address
+  from vendotek_unit u
+  where exists (select 1 from vendotek_vend v where v.unit_id = u.id)
+    and coalesce(u.address,'') <> ''
+  group by 1
+) t group by 1 order by 1"""
+
+Q26 = """
+select coalesce(nullif(f.org, ''), '(пусто)') as org,
+       count(*) filter (where not f.approved and f.code = '') as empty_jun
+from fc f
+where f.ts >= '2026-06-01' and f.ts < '2026-07-01'
+  and f.org <> 'soco-br-of-majid-al-futtaim'
+group by 1 having count(*) filter (where not f.approved and f.code = '') > 0
+order by 2 desc limit 15"""
+
 QUERIES = [
 
 ("1. ТОП-30 АВТОМАТОВ ПО ПОТЕРЯННОЙ ВЫРУЧКЕ", BASE + """
@@ -459,6 +492,11 @@ from (
 ("22. ПУСТОЙ КОД: SOCO ПРОТИВ ОСТАЛЬНЫХ", BASE + Q22),
 
 ("23. ДОЛЯ SOCO ВО ВСЕХ ПУСТЫХ КОДАХ ЗА ВСЮ ИСТОРИЮ", BASE + Q23),
+("24. НА СВЯЗИ БЕЗ ПРОДАЖ: ГРУППИРОВКА ПО АДРЕСУ (депо или точки?)", Q24),
+
+("25. ДЛЯ СРАВНЕНИЯ: СКОЛЬКО МАШИН НА АДРЕС У РАБОТАЮЩИХ", Q25),
+
+("26. ИЮНЬСКАЯ АНОМАЛИЯ: ПУСТЫЕ КОДЫ ВНЕ SOCO", BASE + Q26),
 ]
 
 def main():
