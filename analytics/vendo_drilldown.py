@@ -199,8 +199,8 @@ from (select sn as s2, date_trunc('month', ts) as m2,
 group by 1, u.m2 order by 1"""
 
 Q13 = """
-select count(*) filter (where u.last_seen_at > (extract(epoch from now()) - 7*86400) * 1000) as seen_last_7d,
-       count(*) filter (where u.last_seen_at > (extract(epoch from now()) - 30*86400) * 1000) as seen_last_30d,
+select count(*) filter (where to_timestamp(case when u.last_seen_at > 100000000000 then u.last_seen_at/1000.0 else u.last_seen_at end) > now() - interval '7 days') as seen_last_7d,
+       count(*) filter (where to_timestamp(case when u.last_seen_at > 100000000000 then u.last_seen_at/1000.0 else u.last_seen_at end) > now() - interval '30 days') as seen_last_30d,
        count(*) as not_launched_total
 from vendotek_unit u
 where not exists (select 1 from vendotek_vend v where v.unit_id = u.id)"""
@@ -346,7 +346,7 @@ group by 1 order by 2 desc limit 25"""),
 
 ("8. НЕ ЗАПУЩЕННЫЕ: КОГДА ПОСЛЕДНИЙ РАЗ ВЫХОДИЛИ НА СВЯЗЬ", """
 select case when u.last_seen_at is null or u.last_seen_at = 0 then '(нет отметки)'
-            else to_char(to_timestamp(u.last_seen_at / 1000.0), 'YYYY-MM') end as last_seen_month,
+            else to_char(to_timestamp(case when u.last_seen_at > 100000000000 then u.last_seen_at/1000.0 else u.last_seen_at end), 'YYYY-MM') end as last_seen_month,
        count(*) as units
 from vendotek_unit u
 where not exists (select 1 from vendotek_vend v where v.unit_id = u.id)
@@ -358,7 +358,7 @@ select u.sn, coalesce(nullif(u.org_name,''),'—') as org,
        coalesce(nullif(u.city,''),'—') as city,
        coalesce(nullif(u.address,''),'—') as address,
        case when u.last_seen_at is null or u.last_seen_at = 0 then '—'
-            else to_char(to_timestamp(u.last_seen_at / 1000.0), 'YYYY-MM-DD') end as last_seen
+            else to_char(to_timestamp(case when u.last_seen_at > 100000000000 then u.last_seen_at/1000.0 else u.last_seen_at end), 'YYYY-MM-DD') end as last_seen
 from vendotek_unit u
 where not exists (select 1 from vendotek_vend v where v.unit_id = u.id)
 order by u.last_seen_at desc nulls last limit 25"""),

@@ -235,7 +235,7 @@ select u.sn, u.tid, nullif(u.org_name,'') as org, nullif(u.location_name,'') as 
        nullif(u.city,'') as city, nullif(u.region,'') as region, nullif(u.address,'') as address,
        u.country, u.tz,
        case when u.last_seen_at is null or u.last_seen_at = 0 then null
-            else to_char(to_timestamp(u.last_seen_at / 1000.0), 'YYYY-MM-DD HH24:MI') end as last_seen,
+            else to_char(to_timestamp(case when u.last_seen_at > 100000000000 then u.last_seen_at/1000.0 else u.last_seen_at end), 'YYYY-MM-DD HH24:MI') end as last_seen,
        coalesce(s.attempts, 0) as attempts,
        coalesce(s.approved, 0) as approved,
        coalesce(s.declined, 0) as declined,
@@ -293,7 +293,7 @@ select u.sn, nullif(u.org_name,'') as org, nullif(u.location_name,'') as locatio
        m.module_key, m.name, nullif(m.full_name,'') as full_name, m.status,
        nullif(m.source,'') as source, nullif(m.text,'') as text, m.visibility, m.external,
        case when m.status_changed_at is null or m.status_changed_at = 0 then null
-            else to_char(to_timestamp(m.status_changed_at / 1000.0), 'YYYY-MM-DD HH24:MI') end as status_changed
+            else to_char(to_timestamp(case when m.status_changed_at > 100000000000 then m.status_changed_at/1000.0 else m.status_changed_at end), 'YYYY-MM-DD HH24:MI') end as status_changed
 from vendotek_module m
 left join vendotek_unit u on u.id = m.unit_id
 order by u.sn nulls last, m.name"""),
