@@ -1,0 +1,716 @@
+<title>Платежи Vendotek</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f4f6f8;
+  --surface:#ffffff;
+  --surface-2:#eceff3;
+  --ink:#0f141b;
+  --ink-2:#485462;
+  --ink-3:#727f8e;
+  --rule:#dbe0e7;
+  --rule-strong:#c3cad4;
+  --accent:#1c5cab;
+  --s1:#2a78d6;
+  --s2:#eb6834;
+  --s3:#1baf7a;
+  --crit:#d43b3a;
+  --warn:#b57c00;
+  --crit-soft:#fbeceb;
+  --warn-soft:#fbf3e0;
+  --good-soft:#e7f6ef;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#0e1116;
+    --surface:#161a21;
+    --surface-2:#1e242c;
+    --ink:#eef1f5;
+    --ink-2:#b3bdc9;
+    --ink-3:#87919e;
+    --rule:#2a313a;
+    --rule-strong:#3a434e;
+    --accent:#5b9ceb;
+    --s1:#3987e5;
+    --s2:#d95926;
+    --s3:#199e70;
+    --crit:#e66767;
+    --warn:#c98500;
+    --crit-soft:#2c1a1a;
+    --warn-soft:#2a2214;
+    --good-soft:#152520;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#0e1116;
+  --surface:#161a21;
+  --surface-2:#1e242c;
+  --ink:#eef1f5;
+  --ink-2:#b3bdc9;
+  --ink-3:#87919e;
+  --rule:#2a313a;
+  --rule-strong:#3a434e;
+  --accent:#5b9ceb;
+  --s1:#3987e5;
+  --s2:#d95926;
+  --s3:#199e70;
+  --crit:#e66767;
+  --warn:#c98500;
+  --crit-soft:#2c1a1a;
+  --warn-soft:#2a2214;
+  --good-soft:#152520;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px 96px}
+
+/* ── header ─────────────────────────────────────────── */
+.masthead{padding:56px 0 36px;border-bottom:2px solid var(--ink)}
+.eyebrow{
+  font-family:"IBM Plex Mono", ui-monospace, monospace;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px;
+}
+h1{
+  font-size:clamp(34px,6vw,56px);line-height:1.04;letter-spacing:-.025em;
+  font-weight:700;margin:0 0 18px;text-wrap:balance;
+}
+.standfirst{font-size:clamp(17px,2.2vw,20px);line-height:1.5;color:var(--ink-2);max-width:60ch;margin:0}
+.meta{
+  display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:26px;
+  font-family:"IBM Plex Mono", monospace;font-size:12.5px;color:var(--ink-3);
+}
+.meta b{color:var(--ink-2);font-weight:500}
+
+/* ── kpi ────────────────────────────────────────────── */
+.kpis{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--rule);border:1px solid var(--rule);
+  margin:40px 0 8px;
+}
+.kpi{background:var(--surface);padding:18px 18px 20px}
+.kpi .lab{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:10px;
+}
+.kpi .val{
+  font-size:29px;font-weight:600;letter-spacing:-.02em;line-height:1.1;
+  font-variant-numeric:tabular-nums;
+}
+.kpi .sub{font-size:13px;color:var(--ink-3);margin-top:5px;line-height:1.35}
+.kpi .val.crit{color:var(--crit)}
+
+/* ── sections ───────────────────────────────────────── */
+section{margin-top:64px}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+.tag{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);
+  border:1px solid var(--rule-strong);border-radius:2px;padding:3px 7px;white-space:nowrap;
+}
+.tag.alarm{color:var(--crit);border-color:var(--crit)}
+h2{font-size:clamp(23px,3.4vw,31px);line-height:1.2;letter-spacing:-.02em;font-weight:600;margin:0;text-wrap:balance}
+.lede{font-size:17px;color:var(--ink-2);max-width:64ch;margin:14px 0 0}
+p{max-width:66ch}
+strong{font-weight:600}
+.num{font-variant-numeric:tabular-nums}
+
+/* ── cards & charts ─────────────────────────────────── */
+.card{
+  background:var(--surface);border:1px solid var(--rule);
+  padding:22px 22px 16px;margin-top:26px;position:relative;
+}
+.card-title{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);margin:0 0 4px;
+}
+.card-note{font-size:13.5px;color:var(--ink-3);margin:10px 0 0;max-width:70ch}
+.chart{width:100%;overflow-x:auto}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin:12px 0 2px}
+.legend span{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--ink-2)}
+.legend i{width:11px;height:11px;border-radius:2px;display:inline-block;flex:none}
+
+.tip{
+  position:absolute;pointer-events:none;opacity:0;transition:opacity .1s;
+  background:var(--ink);color:var(--bg);padding:7px 10px;border-radius:3px;
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.5;
+  white-space:nowrap;z-index:9;transform:translate(-50%,-118%);
+}
+.tip b{font-weight:600}
+
+/* ── callouts ───────────────────────────────────────── */
+.callout{
+  border-left:3px solid var(--crit);background:var(--crit-soft);
+  padding:16px 20px;margin-top:26px;
+}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.callout.good{border-left-color:var(--s3);background:var(--good-soft)}
+.callout p{margin:0;max-width:64ch;font-size:15.5px}
+.callout .big{
+  font-size:26px;font-weight:600;letter-spacing:-.02em;display:block;margin-bottom:4px;
+  font-variant-numeric:tabular-nums;
+}
+
+/* ── tables ─────────────────────────────────────────── */
+.tbl-wrap{overflow-x:auto;margin-top:22px;border:1px solid var(--rule);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--rule);white-space:nowrap}
+th{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:500;background:var(--surface-2);
+}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:last-child td{border-bottom:none}
+tr.tot td{font-weight:600;background:var(--surface-2)}
+
+/* ── issue list ─────────────────────────────────────── */
+.issues{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.issues li{background:var(--surface);padding:16px 20px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start}
+.sev{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 7px;border-radius:2px;white-space:nowrap;margin-top:3px;font-weight:500;
+}
+.sev.hi{background:var(--crit);color:#fff}
+.sev.mid{background:var(--warn);color:#fff}
+.sev.lo{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--rule-strong)}
+.issues h4{margin:0 0 4px;font-size:15.5px;font-weight:600}
+.issues p{margin:0;font-size:14.5px;color:var(--ink-2);max-width:62ch}
+code{
+  font-family:"IBM Plex Mono",monospace;font-size:.9em;
+  background:var(--surface-2);padding:1px 5px;border-radius:2px;
+}
+
+/* ── actions ────────────────────────────────────────── */
+.actions{counter-reset:step;margin-top:26px;display:grid;gap:14px}
+.act{
+  background:var(--surface);border:1px solid var(--rule);border-top:2px solid var(--accent);
+  padding:18px 20px;
+}
+.act h4{margin:0 0 6px;font-size:16px;font-weight:600;display:flex;gap:10px;align-items:baseline}
+.act h4::before{
+  counter-increment:step;content:counter(step);
+  font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);font-weight:600;
+}
+.act p{margin:0;font-size:14.5px;color:var(--ink-2)}
+
+footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink-3)}
+footer p{max-width:70ch;margin:0 0 8px}
+@media (max-width:620px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .issues li{grid-template-columns:1fr}
+}
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Разбор платёжных данных · база app</p>
+  <h1>Платежи Vendotek</h1>
+  <p class="standfirst">535 236 транзакций вендинговых автоматов в ОАЭ за 16 месяцев. Выручка растёт стократно — и вместе с ней растёт то, что съедает её незаметно.</p>
+  <div class="meta">
+    <span>Период <b>06.05.2025 — 25.08.2026</b></span>
+    <span>Валюта <b>AED</b></span>
+    <span>Организаций <b>27</b></span>
+    <span>Автоматов <b>1008</b></span>
+  </div>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><div class="lab">Выручка</div><div class="val">6,22 млн</div><div class="sub">AED, успешные платежи</div></div>
+  <div class="kpi"><div class="lab">Платежей</div><div class="val">535 236</div><div class="sub">466 847 успешных</div></div>
+  <div class="kpi"><div class="lab">Approve rate</div><div class="val crit">87,2 %</div><div class="sub">68 389 отказов</div></div>
+  <div class="kpi"><div class="lab">Средний чек</div><div class="val">13,33</div><div class="sub">медиана 7,00 — рынок расслоён</div></div>
+  <div class="kpi"><div class="lab">Активных автоматов</div><div class="val crit">267</div><div class="sub">из 1008 в парке</div></div>
+  <div class="kpi"><div class="lab">Прогноз августа</div><div class="val">1,17 млн</div><div class="sub">+9,9 % к июлю</div></div>
+</div>
+
+<section>
+  <div class="sec-head"><span class="tag">Рост</span><h2>Бизнес вырос в сто раз за пятнадцать месяцев</h2></div>
+  <p class="lede">Май 2025 — 669 платежей и 3,5 тыс. AED. Июль 2026 — 84 тыс. платежей и 1,07 млн AED. Рост не выдохся: август идёт на 1,17 млн, это ещё +10 % к июлю.</p>
+
+  <div class="card">
+    <p class="card-title">Выручка по месяцам, AED</p>
+    <div class="chart" id="c-rev"></div>
+    <p class="card-note">Август показан по факту 25 дней (946 тыс.); пунктирная надстройка — прогноз до конца месяца по дневному темпу 37,8 тыс. AED.</p>
+  </div>
+
+  <p>Перелом произошёл в январе 2026: выручка прыгнула с 151 тыс. до 350 тыс. за месяц, и одновременно средний чек вырос с 10,53 до 14,25. Это не только больше покупок — это другие покупки, дороже. Похоже на подключение крупного оператора, а не на органический рост существующих точек.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag alarm">Потери</span><h2>Каждый восьмой платёж не проходит, и виноват в этом не банк</h2></div>
+  <p class="lede">В марте—апреле 2026 доля отказов подскочила с 7 % до 27 % и держалась два месяца. К августу вернулась к 6,6 %, но провал уже стоил денег.</p>
+
+  <div class="card">
+    <p class="card-title">Доля отказов по месяцам, %</p>
+    <div class="chart" id="c-dec"></div>
+    <p class="card-note">Серая полоса — базовый уровень 7 %, на котором система работала до сбоя и на который вернулась после.</p>
+  </div>
+
+  <div class="callout">
+    <p><span class="big">≈ 460 800 AED</span>
+    недополучено за март—июль сверх нормального уровня отказов. Это <strong>7,4 % всей выручки за 16 месяцев</strong> — 33 205 покупок, которые человек хотел совершить, но автомат не смог принять деньги.</p>
+  </div>
+
+  <p>Оценка консервативная: берётся превышение над базовой линией 7 % и умножается на средний чек того же месяца. Часть покупателей возвращалась и платила со второй попытки — тогда потеря меньше. Часть уходила навсегда и больше не подходила к автомату — тогда больше.</p>
+
+  <div class="card">
+    <p class="card-title">Причины отказов: 67 888 классифицированных</p>
+    <div class="chart" id="c-codes"></div>
+    <div class="legend">
+      <span><i style="background:var(--crit)"></i>Техника: связь, таймаут, недоступность хоста</span>
+      <span><i style="background:var(--s1)"></i>Банк: реальный отказ по карте</span>
+    </div>
+    <p class="card-note">Пустой код ответа и <code>CE</code> означают, что терминал не получил ответ вовсе — транзакция не дошла до банка.</p>
+  </div>
+
+  <div class="callout warn">
+    <p><span class="big">81 % отказов — техника, а не банк</span>
+    54 830 обрывов связи против 13 058 настоящих банковских отказов. Из последних 10 851 — обычная нехватка средств на карте, с ней ничего не сделать. А вот связь — это инфраструктура, и она чинится.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag">Концентрация</span><h2>Половину выручки делают 25 автоматов</h2></div>
+  <p class="lede">На <strong>upay-general-trading</strong> и <strong>tazizi</strong> приходится 79,6 % денег. Топ-25 автоматов из 290 работающих дают 50,3 % выручки, один-единственный — 5,7 %.</p>
+
+  <div class="card">
+    <p class="card-title">Выручка по организациям, AED · топ-10</p>
+    <div class="chart" id="c-org"></div>
+    <p class="card-note">Средний чек подписан справа. Разброс — от 1,99 до 31,05 AED: под одной крышей живут два разных бизнеса.</p>
+  </div>
+
+  <p>Это видно и по структуре: <code>modern-vending</code> — второй по числу транзакций (86 431), но лишь седьмой по деньгам, потому что средний чек 1,99 AED. Кофейные автоматы дают поток, снековые и торговые — выручку. Считать их вместе — значит не понимать ни те, ни другие.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Организация</th><th class="n">Платежей</th><th class="n">Выручка, AED</th><th class="n">Доля</th><th class="n">Средний чек</th></tr></thead>
+      <tbody>
+        <tr><td>upay-general-trading</td><td class="n">117 426</td><td class="n">3 646 423</td><td class="n">58,6 %</td><td class="n">31,05</td></tr>
+        <tr><td>tazizi</td><td class="n">74 039</td><td class="n">1 304 795</td><td class="n">21,0 %</td><td class="n">17,62</td></tr>
+        <tr><td>coffepoint</td><td class="n">41 824</td><td class="n">254 162</td><td class="n">4,1 %</td><td class="n">6,09</td></tr>
+        <tr><td>soco-br-of-majid-al-futtaim</td><td class="n">18 244</td><td class="n">218 684</td><td class="n">3,5 %</td><td class="n">11,99</td></tr>
+        <tr><td>fuelup</td><td class="n">20 744</td><td class="n">192 803</td><td class="n">3,1 %</td><td class="n">9,30</td></tr>
+        <tr><td>vendotek-uae</td><td class="n">19 497</td><td class="n">183 131</td><td class="n">2,9 %</td><td class="n">9,40</td></tr>
+        <tr><td>modern-vending</td><td class="n">86 431</td><td class="n">171 649</td><td class="n">2,8 %</td><td class="n">1,99</td></tr>
+        <tr><td>ginco-general-trading</td><td class="n">50 581</td><td class="n">106 486</td><td class="n">1,7 %</td><td class="n">2,11</td></tr>
+        <tr><td>awafi-vending</td><td class="n">29 596</td><td class="n">88 559</td><td class="n">1,4 %</td><td class="n">2,99</td></tr>
+        <tr><td>остальные 18</td><td class="n">8 465</td><td class="n">54 943</td><td class="n">0,9 %</td><td class="n">—</td></tr>
+        <tr class="tot"><td>Всего</td><td class="n">466 847</td><td class="n">6 220 836</td><td class="n">100 %</td><td class="n">13,33</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag alarm">Парк</span><h2>Три четверти автоматов не продали ничего никогда</h2></div>
+  <p class="lede">В базе 1008 автоматов. Продажи хоть раз были у 290. За последние 30 дней торговали 267.</p>
+
+  <div class="card">
+    <p class="card-title">Состояние парка, штук</p>
+    <div class="chart" id="c-fleet"></div>
+    <p class="card-note">Молчащие 718 — это либо не введённые в эксплуатацию терминалы, либо выведенные и не удалённые из справочника, либо машины, чьи продажи не доезжают до этой базы. Все три версии стоит проверить отдельно.</p>
+  </div>
+
+  <p>Разница между 290 и 267 небольшая — значит парк не деградирует, машины не выбывают пачками. Проблема не в том, что автоматы ломаются, а в том, что 718 из них вообще никогда не появлялись в продажах. Если это реальное железо, стоящее на точках, — это замороженные деньги.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag">Спрос</span><h2>Офисный профиль: будни, обед и вечер</h2></div>
+  <p class="lede">Пик выручки приходится на 19:00—20:00, второй — на обеденные 12:00—13:00. Выходные проваливаются: воскресенье на треть слабее вторника.</p>
+
+  <div class="card">
+    <p class="card-title">Выручка по часам суток, AED</p>
+    <div class="chart" id="c-hour"></div>
+    <p class="card-note">Время местное для терминала (<code>pos_localtime_at</code>). Ночной минимум в 03:00 — 35,6 тыс. AED, дневной максимум в 20:00 — 528 тыс.</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Выручка по дням недели, AED</p>
+    <div class="chart" id="c-dow"></div>
+    <p class="card-note">В ОАЭ выходные — суббота и воскресенье. Провал именно в них подтверждает: автоматы стоят там, где люди работают, а не отдыхают.</p>
+  </div>
+
+  <p>Практический вывод простой: пополнять и обслуживать автоматы нужно утром буднего дня, до 09:00, когда через них проходит меньше 4 % дневной выручки. Любой простой в 19:00—20:00 стоит в пятнадцать раз дороже, чем в 04:00.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag">Чек</span><h2>Два бизнеса в одной таблице</h2></div>
+  <p class="lede">Средний чек 13,33 AED при медиане 7,00 — верный признак того, что «среднего» покупателя не существует. Есть два разных.</p>
+
+  <div class="card">
+    <p class="card-title">Распределение платежей и выручки по размеру чека</p>
+    <div class="chart" id="c-check"></div>
+    <div class="legend">
+      <span><i style="background:var(--s1)"></i>Доля платежей</span>
+      <span><i style="background:var(--s2)"></i>Доля выручки</span>
+    </div>
+    <p class="card-note">Чеки 1—5 AED — это 39 % всех покупок и всего 5,5 % денег. Чеки 20—50 AED — 29 % покупок и 65 % денег.</p>
+  </div>
+
+  <p>Наличные живут почти целиком в дешёвом сегменте: 68 103 платежа со средним чеком <strong>1,84 AED</strong> дают 2 % выручки. Безнал — 15,29 AED и 98 % денег. Считать «средний чек по компании» бессмысленно, пока эти два потока не разделены.</p>
+
+  <div class="callout good">
+    <p>Способ оплаты фактически один: <strong>99,97 % безналичных — бесконтактный EMV</strong>. QR прошёл 101 раз за всю историю. Mastercard даёт 46 % транзакций, но 56 % выручки — на неё приходятся дорогие покупки.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag">Данные</span><h2>Что в базе сломано</h2></div>
+  <p class="lede">Часть разрезов посчитать невозможно — не потому что нет запроса, а потому что нет данных. Это чинится на стороне интеграции.</p>
+
+  <ul class="issues">
+    <li><span class="sev hi">Критично</span><div>
+      <h4>Товарная аналитика недоступна</h4>
+      <p>У 119 375 продаж на 3,71 млн AED — <strong>60 % выручки</strong> — пустое <code>product_name</code>, а <code>product_id</code> равен <code>NULL</code>. Что именно покупают на большей части денег, база не знает.</p>
+    </div></li>
+    <li><span class="sev hi">Критично</span><div>
+      <h4>География не заполнена</h4>
+      <p>215 автоматов с пустым городом дают 5,37 млн AED — 86 % выручки. Разрез по регионам построить не на чем.</p>
+    </div></li>
+    <li><span class="sev mid">Важно</span><div>
+      <h4>В поле города лежат названия автоматов</h4>
+      <p><code>Coffee Machine</code>, <code>Snack Machine</code>, <code>COSMO GUSTO</code>, <code>PS009-30505120000015</code>, <code>Protein Shack</code> — это не города. Плюс опечатка <code>Dabai</code> вместо <code>Dubai</code> и три написания <code>Coffee Machine</code> в разном регистре.</p>
+    </div></li>
+    <li><span class="sev mid">Важно</span><div>
+      <h4>Типы карт не нормализованы</h4>
+      <p>Пятнадцать написаний для двух платёжных систем: <code>Visa DEBIT</code>, <code>Visa Debit</code>, <code>VISA DEBIT</code>, <code>DEBIT MASTERCARD</code>, <code>Debit Mastercard</code>… Любая группировка по карте требует ручного приведения.</p>
+    </div></li>
+    <li><span class="sev mid">Важно</span><div>
+      <h4>27 792 отказа вообще без кода ответа</h4>
+      <p>Крупнейшая категория отказов — пустая строка. Терминал не получил от хоста ничего, и разобрать причину постфактум нельзя.</p>
+    </div></li>
+    <li><span class="sev lo">Заметка</span><div>
+      <h4>Отменённые выдачи помечены как завершённые</h4>
+      <p>Из 531 087 выдач <code>completed = true</code> у 531 084, при этом <code>cancelled = true</code> у 4 077. Флаги пересекаются — «завершено» означает «процесс закончился», а не «товар выдан». Считать успех по <code>completed</code> нельзя.</p>
+    </div></li>
+    <li><span class="sev lo">Заметка</span><div>
+      <h4>186 успешных платежей с нулевой суммой</h4>
+      <p>Мелочь на общем фоне, но <code>approved = true</code> при сумме 0,00 — это либо тест, либо промо, либо ошибка. Стоит понять, что именно.</p>
+    </div></li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag">Дальше</span><h2>Что с этим делать</h2></div>
+  <div class="actions">
+    <div class="act"><h4>Разобрать обрывы связи по автоматам</h4>
+      <p>54 830 технических отказов не размазаны ровно — почти наверняка их дают конкретные точки с плохим каналом. Разрез «доля пустых кодов ответа и <code>CE</code> по автоматам» покажет адреса, где менять связь. Это самая дешёвая выручка из всех доступных.</p></div>
+    <div class="act"><h4>Выяснить, что было в марте—апреле</h4>
+      <p>Двухмесячный скачок отказов до 27 % — это событие: смена процессора, обновление прошивки, миграция эквайринга. Нужно понять причину, чтобы это не повторилось; ретроспективно — 305 тыс. AED только за эти два месяца.</p></div>
+    <div class="act"><h4>Провести инвентаризацию 718 молчащих автоматов</h4>
+      <p>Разделить их на «не установлены», «списаны, но не удалены» и «работают, но данные не доходят». Третья группа — это скрытая выручка, которой нет в отчётности.</p></div>
+    <div class="act"><h4>Починить <code>product_name</code> на стороне интеграции</h4>
+      <p>Пока 60 % выручки без названия товара, ассортиментные решения принимать не на чем: ни ротацию, ни ценообразование, ни планограмму посчитать нельзя.</p></div>
+    <div class="act"><h4>Разделить отчётность на кофе и снеки</h4>
+      <p>Чек 1,99 и 31,05 AED — разные экономики с разной логистикой пополнения. Общий средний чек не описывает ни одну из них.</p></div>
+  </div>
+</section>
+
+<footer>
+  <p>Источник: база <code>app</code> (PostgreSQL 18.3), таблицы <code>vendotek_payment</code>, <code>vendotek_payment_cash</code>, <code>vendotek_payment_cashless</code>, <code>vendotek_vend</code>, <code>vendotek_unit</code>. Выборка на 25.08.2026, 19:54.</p>
+  <p>Суммой платежа считается <code>cash_amount + cashless_amount</code>, время операции — <code>pos_localtime_at</code> (не <code>synced_at</code>, который отражает лишь момент выгрузки). Успехом считается <code>approved = true</code>. Выручка везде — по успешным платежам.</p>
+</footer>
+
+</div>
+
+<script>
+const RU = n => n.toLocaleString('ru-RU');
+const cs = getComputedStyle(document.documentElement);
+const C = k => cs.getPropertyValue(k).trim();
+
+function tipFor(host){
+  const t = document.createElement('div');
+  t.className = 'tip';
+  host.appendChild(t);
+  return {
+    show(x, y, html){ t.innerHTML = html; t.style.left = x+'px'; t.style.top = y+'px'; t.style.opacity = 1; },
+    hide(){ t.style.opacity = 0; }
+  };
+}
+
+function svgEl(tag, attrs){
+  const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+
+/* ── вертикальные столбцы ──────────────────────────── */
+function barChart(sel, data, opt){
+  const host = document.querySelector(sel);
+  const card = host.closest('.card');
+  const tip = tipFor(card);
+  const W = 940, H = opt.height || 260, PL = 62, PR = 12, PT = 14, PB = 34;
+  const iw = W - PL - PR, ih = H - PT - PB;
+  const max = opt.max || Math.max(...data.map(d => d.v + (d.extra || 0)));
+  const bw = iw / data.length;
+  const svg = svgEl('svg', {viewBox:`0 0 ${W} ${H}`, role:'img', 'aria-label':opt.aria || ''});
+
+  (opt.ticks || 4) && [...Array(5).keys()].forEach(i => {
+    const val = max * i / 4, y = PT + ih - ih * i / 4;
+    svg.appendChild(svgEl('line', {x1:PL, x2:W-PR, y1:y, y2:y, stroke:C('--rule'), 'stroke-width':1}));
+    const t = svgEl('text', {x:PL-9, y:y+4, 'text-anchor':'end', fill:C('--ink-3'),
+      'font-size':11, 'font-family':'IBM Plex Mono, monospace'});
+    t.textContent = opt.fmtAxis ? opt.fmtAxis(val) : RU(Math.round(val));
+    svg.appendChild(t);
+  });
+
+  data.forEach((d, i) => {
+    const x = PL + i * bw + bw * 0.16, w = bw * 0.68;
+    const h = ih * d.v / max, y = PT + ih - h;
+    const r = svgEl('rect', {x, y, width:w, height:Math.max(h,1), rx:3,
+      fill: d.color || C('--s1')});
+    svg.appendChild(r);
+    if (d.extra){
+      const eh = ih * d.extra / max;
+      svg.appendChild(svgEl('rect', {x, y: y - eh - 2, width:w, height:eh, rx:3,
+        fill:C('--s1'), opacity:.3, stroke:C('--s1'), 'stroke-width':1, 'stroke-dasharray':'3 2'}));
+    }
+    const hit = svgEl('rect', {x:PL + i*bw, y:PT, width:bw, height:ih, fill:'transparent'});
+    hit.style.cursor = 'default';
+    hit.addEventListener('mouseenter', () => {
+      const bb = card.getBoundingClientRect(), sb = svg.getBoundingClientRect();
+      const px = (PL + i*bw + bw/2) / W * sb.width + (sb.left - bb.left);
+      const py = y / H * sb.height + (sb.top - bb.top);
+      tip.show(px, py, d.tip);
+    });
+    hit.addEventListener('mouseleave', () => tip.hide());
+    svg.appendChild(hit);
+
+    if (!opt.everyOther || i % opt.everyOther === 0){
+      const t = svgEl('text', {x:PL + i*bw + bw/2, y:H-12, 'text-anchor':'middle',
+        fill:C('--ink-3'), 'font-size':11, 'font-family':'IBM Plex Mono, monospace'});
+      t.textContent = d.l;
+      svg.appendChild(t);
+    }
+  });
+  host.appendChild(svg);
+}
+
+/* ── линия ─────────────────────────────────────────── */
+function lineChart(sel, data, opt){
+  const host = document.querySelector(sel);
+  const card = host.closest('.card');
+  const tip = tipFor(card);
+  const W = 940, H = 250, PL = 48, PR = 14, PT = 16, PB = 34;
+  const iw = W - PL - PR, ih = H - PT - PB;
+  const max = opt.max, step = iw / (data.length - 1);
+  const svg = svgEl('svg', {viewBox:`0 0 ${W} ${H}`, role:'img', 'aria-label':opt.aria || ''});
+  const Y = v => PT + ih - ih * v / max;
+
+  if (opt.band){
+    svg.appendChild(svgEl('rect', {x:PL, y:Y(opt.band), width:iw, height:PT+ih-Y(opt.band),
+      fill:C('--ink-3'), opacity:.09}));
+    const bt = svgEl('text', {x:W-PR-4, y:Y(opt.band)-6, 'text-anchor':'end', fill:C('--ink-3'),
+      'font-size':11, 'font-family':'IBM Plex Mono, monospace'});
+    bt.textContent = 'норма ' + opt.band + ' %';
+    svg.appendChild(bt);
+  }
+  [0,1,2,3,4].forEach(i => {
+    const val = max*i/4, y = Y(val);
+    svg.appendChild(svgEl('line', {x1:PL, x2:W-PR, y1:y, y2:y, stroke:C('--rule'), 'stroke-width':1}));
+    const t = svgEl('text', {x:PL-9, y:y+4, 'text-anchor':'end', fill:C('--ink-3'),
+      'font-size':11, 'font-family':'IBM Plex Mono, monospace'});
+    t.textContent = Math.round(val) + '%';
+    svg.appendChild(t);
+  });
+
+  const pts = data.map((d,i) => [PL + i*step, Y(d.v)]);
+  svg.appendChild(svgEl('polyline', {points:pts.map(p => p.join(',')).join(' '),
+    fill:'none', stroke:C('--crit'), 'stroke-width':2.5, 'stroke-linejoin':'round', 'stroke-linecap':'round'}));
+
+  data.forEach((d,i) => {
+    const [x,y] = pts[i];
+    svg.appendChild(svgEl('circle', {cx:x, cy:y, r:d.v > 15 ? 5.5 : 4,
+      fill:C('--crit'), stroke:C('--surface'), 'stroke-width':2}));
+    const hit = svgEl('rect', {x:x-step/2, y:PT, width:step, height:ih, fill:'transparent'});
+    hit.addEventListener('mouseenter', () => {
+      const bb = card.getBoundingClientRect(), sb = svg.getBoundingClientRect();
+      tip.show(x / W * sb.width + (sb.left - bb.left), y / H * sb.height + (sb.top - bb.top), d.tip);
+    });
+    hit.addEventListener('mouseleave', () => tip.hide());
+    svg.appendChild(hit);
+    if (i % 2 === 0){
+      const t = svgEl('text', {x, y:H-12, 'text-anchor':'middle', fill:C('--ink-3'),
+        'font-size':11, 'font-family':'IBM Plex Mono, monospace'});
+      t.textContent = d.l;
+      svg.appendChild(t);
+    }
+  });
+  host.appendChild(svg);
+}
+
+/* ── горизонтальные полосы ─────────────────────────── */
+function hBar(sel, data, opt){
+  const host = document.querySelector(sel);
+  const card = host.closest('.card');
+  const tip = tipFor(card);
+  const rowH = opt.rowH || 30, PL = opt.labelW || 210, PR = opt.rightW || 76;
+  const W = 940, H = data.length * rowH + 12;
+  const iw = W - PL - PR;
+  const max = Math.max(...data.map(d => d.v));
+  const svg = svgEl('svg', {viewBox:`0 0 ${W} ${H}`, role:'img', 'aria-label':opt.aria || ''});
+
+  data.forEach((d,i) => {
+    const y = i * rowH + 6, bh = rowH - 12;
+    const w = Math.max(iw * d.v / max, 2);
+    const lab = svgEl('text', {x:PL-12, y:y + bh/2 + 4, 'text-anchor':'end', fill:C('--ink-2'),
+      'font-size':12.5, 'font-family':'IBM Plex Mono, monospace'});
+    lab.textContent = d.l;
+    svg.appendChild(lab);
+    svg.appendChild(svgEl('rect', {x:PL, y, width:w, height:bh, rx:3, fill:d.color || C('--s1')}));
+    const val = svgEl('text', {x:PL + w + 9, y:y + bh/2 + 4, fill:C('--ink-2'),
+      'font-size':12, 'font-family':'IBM Plex Mono, monospace'});
+    val.textContent = d.r;
+    svg.appendChild(val);
+    const hit = svgEl('rect', {x:0, y:y-3, width:W, height:rowH, fill:'transparent'});
+    hit.addEventListener('mouseenter', () => {
+      const bb = card.getBoundingClientRect(), sb = svg.getBoundingClientRect();
+      tip.show((PL + w/2) / W * sb.width + (sb.left - bb.left),
+               y / H * sb.height + (sb.top - bb.top), d.tip);
+    });
+    hit.addEventListener('mouseleave', () => tip.hide());
+    svg.appendChild(hit);
+  });
+  host.appendChild(svg);
+}
+
+/* ── сгруппированные полосы (две серии) ────────────── */
+function groupBar(sel, data){
+  const host = document.querySelector(sel);
+  const card = host.closest('.card');
+  const tip = tipFor(card);
+  const W = 940, H = 280, PL = 46, PR = 12, PT = 14, PB = 40;
+  const iw = W - PL - PR, ih = H - PT - PB;
+  const max = Math.max(...data.flatMap(d => [d.a, d.b]));
+  const bw = iw / data.length;
+  const svg = svgEl('svg', {viewBox:`0 0 ${W} ${H}`, role:'img', 'aria-label':'Распределение по размеру чека'});
+
+  [0,1,2,3,4].forEach(i => {
+    const y = PT + ih - ih*i/4;
+    svg.appendChild(svgEl('line', {x1:PL, x2:W-PR, y1:y, y2:y, stroke:C('--rule'), 'stroke-width':1}));
+    const t = svgEl('text', {x:PL-9, y:y+4, 'text-anchor':'end', fill:C('--ink-3'),
+      'font-size':11, 'font-family':'IBM Plex Mono, monospace'});
+    t.textContent = Math.round(max*i/4) + '%';
+    svg.appendChild(t);
+  });
+
+  data.forEach((d,i) => {
+    const x0 = PL + i*bw;
+    [['a', C('--s1'), 0], ['b', C('--s2'), 1]].forEach(([k, col, j]) => {
+      const w = bw * 0.32, x = x0 + bw*0.14 + j*(w+2);
+      const h = ih * d[k] / max, y = PT + ih - h;
+      svg.appendChild(svgEl('rect', {x, y, width:w, height:Math.max(h,1), rx:3, fill:col}));
+    });
+    const hit = svgEl('rect', {x:x0, y:PT, width:bw, height:ih, fill:'transparent'});
+    hit.addEventListener('mouseenter', () => {
+      const bb = card.getBoundingClientRect(), sb = svg.getBoundingClientRect();
+      tip.show((x0 + bw/2)/W*sb.width + (sb.left-bb.left),
+               (PT + ih - ih*Math.max(d.a,d.b)/max)/H*sb.height + (sb.top-bb.top), d.tip);
+    });
+    hit.addEventListener('mouseleave', () => tip.hide());
+    svg.appendChild(hit);
+    const t = svgEl('text', {x:x0 + bw/2, y:H-14, 'text-anchor':'middle', fill:C('--ink-3'),
+      'font-size':11.5, 'font-family':'IBM Plex Mono, monospace'});
+    t.textContent = d.l;
+    svg.appendChild(t);
+  });
+  host.appendChild(svg);
+}
+
+/* ══ данные ═══════════════════════════════════════════ */
+const months = [
+  ['05.25', 3451.84, 637, 4.78],   ['06.25', 6280.81, 1051, 5.40],
+  ['07.25', 3792.82, 1142, 4.27],  ['08.25', 8862.21, 2037, 4.01],
+  ['09.25', 35362.14, 4603, 6.23], ['10.25', 87228.59, 8999, 1.86],
+  ['11.25', 113651.63, 12475, 1.92],['12.25', 151214.69, 14392, 3.85],
+  ['01.26', 350484.60, 24594, 6.22],['02.26', 465867.81, 31532, 7.09],
+  ['03.26', 486783.71, 32420, 27.47],['04.26', 630411.92, 47625, 26.53],
+  ['05.26', 893054.71, 66101, 12.48],['06.26', 970958.67, 71939, 12.33],
+  ['07.26', 1067330.55, 75229, 10.40],['08.26', 946099.73, 72071, 6.58]
+];
+
+barChart('#c-rev', months.map(([l,v,ok,d], i) => ({
+  l, v,
+  extra: i === 15 ? 227064 : 0,
+  color: i === 15 ? C('--s1') : C('--s1'),
+  tip: `<b>${l}</b><br>выручка ${RU(Math.round(v))} AED<br>успешных ${RU(ok)}` +
+       (i === 15 ? '<br>прогноз 1 173 164' : '')
+})), {height:270, max:1200000, aria:'Выручка по месяцам', fmtAxis: v => Math.round(v/1000)+'k'});
+
+lineChart('#c-dec', months.map(([l,v,ok,d]) => ({
+  l, v:d, tip:`<b>${l}</b><br>отказов ${d.toFixed(2)} %<br>из ${RU(Math.round(ok/(1-d/100)))} попыток`
+})), {max:30, band:7, aria:'Доля отказов по месяцам'});
+
+hBar('#c-codes', [
+  {l:'(пустой код)', v:27792, r:'27 792', color:C('--crit'), tip:'<b>Нет ответа хоста</b><br>27 792 · терминал не получил ничего'},
+  {l:'CE', v:24410, r:'24 410', color:C('--crit'), tip:'<b>Ошибка связи</b><br>24 410 · канал до хоста'},
+  {l:'116', v:10851, r:'10 851', color:C('--s1'), tip:'<b>Недостаточно средств</b><br>10 851 · реальный отказ банка'},
+  {l:'TO', v:1555, r:'1 555', color:C('--crit'), tip:'<b>Таймаут</b><br>1 555 · ответ не пришёл вовремя'},
+  {l:'100', v:1039, r:'1 039', color:C('--s1'), tip:'<b>Отказ эмитента</b><br>1 039 · do not honor'},
+  {l:'907', v:771, r:'771', color:C('--crit'), tip:'<b>Эмитент недоступен</b><br>771 · инфраструктура банка'},
+  {l:'104', v:573, r:'573', color:C('--s1'), tip:'<b>Ограничение по карте</b><br>573'},
+  {l:'909', v:184, r:'184', color:C('--crit'), tip:'<b>Сбой системы</b><br>184'},
+  {l:'прочие', v:762, r:'762', color:C('--s1'), tip:'<b>Прочие коды банка</b><br>762 · лимиты, срок, частота'}
+], {rowH:32, labelW:130, aria:'Коды отказов'});
+
+hBar('#c-org', [
+  {l:'upay-general-trading', v:3646422, r:'3,65 млн · 31,05', tip:'<b>upay-general-trading</b><br>117 426 платежей<br>3 646 423 AED · 58,6 %'},
+  {l:'tazizi', v:1304795, r:'1,30 млн · 17,62', tip:'<b>tazizi</b><br>74 039 платежей<br>1 304 795 AED · 21,0 %'},
+  {l:'coffepoint', v:254162, r:'254 тыс. · 6,09', tip:'<b>coffepoint</b><br>41 824 платежа<br>254 162 AED · 4,1 %'},
+  {l:'soco-br-of-majid…', v:218684, r:'219 тыс. · 11,99', tip:'<b>soco-br-of-majid-al-futtaim</b><br>18 244 платежа<br>218 684 AED'},
+  {l:'fuelup', v:192803, r:'193 тыс. · 9,30', tip:'<b>fuelup</b><br>20 744 платежа<br>192 803 AED'},
+  {l:'vendotek-uae', v:183131, r:'183 тыс. · 9,40', tip:'<b>vendotek-uae</b><br>19 497 платежей<br>183 131 AED'},
+  {l:'modern-vending', v:171649, r:'172 тыс. · 1,99', color:C('--s2'), tip:'<b>modern-vending</b><br>86 431 платёж — 2-е место по потоку<br>171 649 AED — 7-е по деньгам'},
+  {l:'ginco-general-trading', v:106486, r:'106 тыс. · 2,11', color:C('--s2'), tip:'<b>ginco-general-trading</b><br>50 581 платёж<br>106 486 AED'},
+  {l:'awafi-vending', v:88559, r:'89 тыс. · 2,99', color:C('--s2'), tip:'<b>awafi-vending</b><br>29 596 платежей<br>88 559 AED'},
+  {l:'mania-trading', v:13889, r:'14 тыс. · 78,03', tip:'<b>mania-trading</b><br>178 платежей<br>самый высокий чек: 78,03 AED'}
+], {rowH:32, labelW:190, rightW:130, aria:'Выручка по организациям'});
+
+hBar('#c-fleet', [
+  {l:'торговали за 30 дней', v:267, r:'267 · 26 %', color:C('--s3'), tip:'<b>Активные</b><br>267 автоматов'},
+  {l:'продавали когда-либо', v:290, r:'290 · 29 %', color:C('--s1'), tip:'<b>С историей продаж</b><br>290 автоматов'},
+  {l:'ни одной продажи', v:718, r:'718 · 71 %', color:C('--crit'), tip:'<b>Молчат всю историю</b><br>718 автоматов'},
+  {l:'всего в справочнике', v:1008, r:'1008', color:C('--ink-3'), tip:'<b>Парк в базе</b><br>1008 автоматов'}
+], {rowH:34, labelW:190, rightW:110, aria:'Состояние парка'});
+
+const hours = [89432,54952,39987,35627,39197,65308,129129,210467,259728,296688,292961,345814,
+               454177,391265,319655,279639,281519,322965,431399,527901,527964,418715,257230,149116];
+barChart('#c-hour', hours.map((v,i) => ({
+  l: String(i).padStart(2,'0'), v,
+  color: (i>=18 && i<=21) || i===12 || i===13 ? C('--s2') : C('--s1'),
+  tip:`<b>${String(i).padStart(2,'0')}:00</b><br>${RU(v)} AED`
+})), {height:240, everyOther:2, aria:'Выручка по часам',
+      fmtAxis: v => Math.round(v/1000)+'k'});
+
+barChart('#c-dow', [
+  ['Пн',973967],['Вт',993675],['Ср',961049],['Чт',974747],['Пт',925267],['Сб',732820],['Вс',659312]
+].map(([l,v],i) => ({l, v, color: i>=5 ? C('--s2') : C('--s1'),
+  tip:`<b>${l}</b><br>${RU(v)} AED`})),
+  {height:220, aria:'Выручка по дням недели', fmtAxis: v => Math.round(v/1000)+'k'});
+
+const tot_p = 466847, tot_r = 6220836.43;
+groupBar('#c-check', [
+  ['0—1', 5420, 606.28],['1—5', 181945, 340325.70],['5—10', 71016, 479406.44],
+  ['10—20', 65678, 908299.10],['20—50', 135719, 4061883.88],['50+', 7069, 430315.03]
+].map(([l,p,r]) => ({
+  l, a: p/tot_p*100, b: r/tot_r*100,
+  tip:`<b>${l} AED</b><br>платежей ${RU(p)} · ${(p/tot_p*100).toFixed(1)} %<br>выручка ${RU(Math.round(r))} · ${(r/tot_r*100).toFixed(1)} %`
+})));
+</script>
