@@ -403,6 +403,24 @@ from (
 where per_day_30 >= 1 and coalesce(address,'') = ''
 order by revenue_30 desc nulls last limit 20"""
 
+Q30 = """
+select t.sn,
+       to_char(t.last_sale, 'YYYY-MM-DD') as last_sale,
+       ((select max(ts) from fc)::date - t.last_sale::date) as days_silent,
+       t.payments,
+       round(t.revenue_lifetime, 0) as revenue_lifetime,
+       to_char(to_timestamp(case when u.last_seen_at > 100000000000 then u.last_seen_at/1000.0 else u.last_seen_at end), 'YYYY-MM-DD') as last_seen,
+       coalesce(nullif(u.address, ''), '(нет)') as address
+from (
+  select sn, max(ts) as last_sale,
+         count(*) filter (where approved) as payments,
+         sum(amount) filter (where approved) as revenue_lifetime
+  from fc group by sn
+) t
+join vendotek_unit u on u.sn = t.sn
+where t.last_sale < (select max(ts) from fc) - interval '30 days'
+order by t.revenue_lifetime desc nulls last limit 30"""
+
 QUERIES = [
 
 ("1. ТОП-30 АВТОМАТОВ ПО ПОТЕРЯННОЙ ВЫРУЧКЕ", BASE + """
@@ -553,6 +571,7 @@ from (
 ("28. ЗАПОЛНЕННОСТЬ АДРЕСА У МАШИН С ПРОДАЖАМИ", Q28),
 
 ("29. РАБОТАЮТ КАЖДЫЙ ДЕНЬ, НО АДРЕСА НЕТ — ТОП-20 ПО ВЫРУЧКЕ", BASE + Q29),
+("30. РАЗВЁРНУТЫЕ, НО ВСТАЛИ: НЕТ ПРОДАЖ БОЛЬШЕ 30 ДНЕЙ", BASE + Q30),
 ]
 
 def main():
