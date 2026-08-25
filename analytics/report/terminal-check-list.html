@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Terminal Check List</title>
+<style>
+@page { size: A4; margin: 14mm 13mm 12mm; }
+
+*{ box-sizing: border-box; }
+body{
+  margin:0; background:#fff; color:#111;
+  font-family: "Helvetica Neue", Helvetica, Arial, "DejaVu Sans", sans-serif;
+  font-size: 9.6pt; line-height: 1.42;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.mono{ font-family: "Courier New", "DejaVu Sans Mono", monospace; }
+
+/* ---------- header ---------- */
+header{ border-bottom: 2.2pt solid #111; padding-bottom: 7pt; margin-bottom: 12pt; }
+.eyebrow{
+  font-size: 7.4pt; letter-spacing: .14em; text-transform: uppercase;
+  color:#555; margin:0 0 4pt;
+}
+h1{ font-size: 20pt; line-height:1.1; margin:0 0 5pt; letter-spacing:-.01em; }
+.sub{ font-size: 9.6pt; color:#333; margin:0; max-width: 155mm; }
+.docmeta{
+  display:flex; gap:16pt; flex-wrap:wrap; margin-top:7pt;
+  font-size:8pt; color:#555;
+}
+.docmeta b{ color:#111; font-weight:600; }
+
+/* ---------- fill-in strip ---------- */
+.fill{
+  display:flex; gap:10pt; margin:9pt 0 0;
+  font-size:8.2pt; color:#444;
+}
+.fill div{ flex:1; border:0.8pt solid #999; padding:5pt 6pt 12pt; }
+.fill span{ text-transform:uppercase; letter-spacing:.08em; font-size:7pt; color:#666; }
+
+/* ---------- sections ---------- */
+section{ margin-top: 12pt; }
+h2{
+  font-size: 11.6pt; margin:0 0 3pt; letter-spacing:-.01em;
+  display:flex; align-items:baseline; gap:7pt;
+}
+.badge{
+  font-size:7pt; letter-spacing:.09em; text-transform:uppercase; font-weight:700;
+  padding:1.6pt 5pt; border-radius:2pt; color:#fff; white-space:nowrap;
+}
+.b1{ background:#b3261e; }
+.b2{ background:#8a5a00; }
+.b3{ background:#1f4d8f; }
+.intro{ font-size:9.1pt; color:#333; margin:3pt 0 6pt; max-width:165mm; }
+
+/* ---------- tables ---------- */
+table{ width:100%; border-collapse:collapse; font-size:8.6pt; margin-top:5pt; }
+th{
+  text-align:left; font-size:7pt; letter-spacing:.07em; text-transform:uppercase;
+  color:#444; font-weight:600; border-bottom:1pt solid #111; padding:4pt 5pt; background:#f2f2f2;
+}
+td{ padding:5pt 5pt; border-bottom:0.6pt solid #ccc; vertical-align:top; }
+td.n{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+td.op{ white-space:nowrap; font-size:8.2pt; }
+tr.hi td{ background:#fbeeed; }
+tr.mid td{ background:#fdf6e6; }
+.sn{ font-family:"Courier New","DejaVu Sans Mono",monospace; font-size:8.8pt; font-weight:700; }
+.box{
+  display:inline-block; width:9pt; height:9pt; border:1pt solid #333;
+  vertical-align:-1pt; margin-right:3pt;
+}
+.res{ width:34mm; }
+.res .line{ border-bottom:0.6pt solid #999; height:11pt; }
+
+/* ---------- checklists ---------- */
+.checks{ display:flex; gap:11pt; margin-top:8pt; }
+.checks > div{ flex:1; border:0.8pt solid #bbb; padding:7pt 9pt 8pt; }
+.checks h3{
+  font-size:8pt; letter-spacing:.09em; text-transform:uppercase;
+  margin:0 0 5pt; color:#333;
+}
+ol.steps{ margin:0; padding-left:0; list-style:none; counter-reset:s; }
+ol.steps li{
+  counter-increment:s; position:relative; padding-left:15pt; margin-bottom:4.5pt; font-size:8.7pt;
+}
+ol.steps li::before{
+  content: counter(s); position:absolute; left:0; top:0;
+  font-family:"Courier New",monospace; font-weight:700; font-size:8pt; color:#666;
+}
+
+/* ---------- callout ---------- */
+.note{
+  border-left:2.4pt solid #b3261e; background:#fbeeed;
+  padding:7pt 10pt; margin-top:8pt; font-size:9pt;
+}
+.note.calm{ border-left-color:#1f4d8f; background:#eef3fa; }
+.note b{ font-weight:700; }
+
+/* ---------- footer ---------- */
+footer{
+  margin-top:16pt; padding-top:7pt; border-top:0.8pt solid #999;
+  font-size:7.6pt; color:#666;
+}
+footer p{ margin:0 0 3pt; max-width:170mm; }
+
+.pagebreak{ break-before: page; }
+.avoid{ break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Field service task &middot; Vendotek UAE &middot; Issued 26 Aug 2026</p>
+  <h1>Terminal Check List</h1>
+  <p class="sub">Eleven terminals need an on-site inspection. Seven of them drop the connection before the transaction reaches the bank; four have stopped selling altogether. Everything else in the fleet is running normally and must not be touched.</p>
+  <div class="docmeta">
+    <span>Data window <b>1&ndash;25 August 2026</b></span>
+    <span>Fleet average <b>0.52 % CE</b></span>
+    <span>Best operator <b>0.08 % CE (tazizi)</b></span>
+  </div>
+</header>
+
+<div class="fill">
+  <div><span>Engineer</span></div>
+  <div><span>Date of visit</span></div>
+  <div><span>Vehicle / route</span></div>
+  <div><span>Supervisor sign-off</span></div>
+</div>
+
+<section class="avoid">
+  <h2><span class="badge b1">Priority 1</span> Dead terminal &mdash; replace or re-provision</h2>
+  <p class="intro">This unit has <b>never completed a single payment</b>. Not one, in its entire history: 792 attempts, 792 failures. Every customer who walked up to it was turned away. It accounts for 31&nbsp;% of all connection errors in the company by itself.</p>
+
+  <table>
+    <thead>
+      <tr><th style="width:26mm">Terminal</th><th style="width:30mm">Site</th><th style="width:32mm">Operator</th><th class="n">Attempts</th><th class="n">CE</th><th class="n" style="width:14mm">Rate</th><th class="res">Result</th></tr>
+    </thead>
+    <tbody>
+      <tr class="hi">
+        <td class="sn">221400017033</td><td>Dubai</td><td class="op">upay-general-trading</td>
+        <td class="n">176</td><td class="n">176</td><td class="n">100 %</td>
+        <td class="res"><div class="line"></div></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <b>Do not spend time on signal tuning here.</b> A terminal that has never authorised a payment is not a coverage problem. Check acquirer registration and terminal ID provisioning first &mdash; then SIM, then hardware. If the unit cannot be brought up within one visit, pull it from the site and replace it.
+  </div>
+</section>
+
+<section class="avoid">
+  <h2><span class="badge b2">Priority 2</span> Connection errors above 5 %</h2>
+  <p class="intro">These terminals do complete payments, but drop between one in twenty and one in six. For comparison, a healthy terminal sits below 1 %, and the best operator in the fleet runs at 0.08 %.</p>
+
+  <table>
+    <thead>
+      <tr><th style="width:26mm">Terminal</th><th style="width:38mm">Site</th><th style="width:30mm">Operator</th><th class="n">Attempts</th><th class="n">CE</th><th class="n" style="width:14mm">Rate</th><th class="res">Result</th></tr>
+    </thead>
+    <tbody>
+      <tr class="mid"><td class="sn">221400016790</td><td>&mdash;</td><td class="op">modern-vending</td><td class="n">184</td><td class="n">29</td><td class="n">15.8 %</td><td class="res"><div class="line"></div></td></tr>
+      <tr class="mid"><td class="sn">221400017027</td><td>Dubai</td><td class="op">upay-general-trading</td><td class="n">262</td><td class="n">38</td><td class="n">14.5 %</td><td class="res"><div class="line"></div></td></tr>
+      <tr><td class="sn">221400010886</td><td>&mdash;</td><td class="op">upay-general-trading</td><td class="n">183</td><td class="n">13</td><td class="n">7.1 %</td><td class="res"><div class="line"></div></td></tr>
+      <tr><td class="sn">221400017144</td><td>Dubai</td><td class="op">upay-general-trading</td><td class="n">414</td><td class="n">24</td><td class="n">5.8 %</td><td class="res"><div class="line"></div></td></tr>
+      <tr><td class="sn">221400014242</td><td>&mdash;</td><td class="op">upay-general-trading</td><td class="n">773</td><td class="n">43</td><td class="n">5.6 %</td><td class="res"><div class="line"></div></td></tr>
+      <tr><td class="sn">221400016440</td><td>Shangrilla Men Accommodation</td><td class="op">alameed</td><td class="n">117</td><td class="n">6</td><td class="n">5.1 %</td><td class="res"><div class="line"></div></td></tr>
+    </tbody>
+  </table>
+
+  <div class="checks">
+    <div>
+      <h3>On arrival &mdash; record before touching anything</h3>
+      <ol class="steps">
+        <li>Signal strength shown on the terminal (bars or dBm). Write the number down.</li>
+        <li>Mobile operator and whether the SIM is roaming.</li>
+        <li>Any error or warning on screen.</li>
+        <li>Firmware version.</li>
+      </ol>
+    </div>
+    <div>
+      <h3>Then check, in this order</h3>
+      <ol class="steps">
+        <li>Antenna: connected, undamaged, not pressed against metal or inside the cabinet.</li>
+        <li>SIM: seated firmly, data plan active, not expired.</li>
+        <li>Power: stable supply, no shared circuit with a compressor or motor.</li>
+        <li>Run a test payment. <b>Write down the response code</b>, not just pass/fail.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="avoid pagebreak">
+  <h2><span class="badge b3">Priority 3</span> Machines that stopped selling</h2>
+  <p class="intro">These four were working and earning, then went quiet. In the two largest cases the terminal stopped reporting to the network <b>one to two days after the last sale</b> &mdash; which usually means the machine was switched off or moved, not that the software failed. First question on site is simply: is the machine still there?</p>
+
+  <table>
+    <thead>
+      <tr><th style="width:26mm">Terminal</th><th style="width:34mm">Site</th><th style="width:22mm">Last sale</th><th class="n">Days idle</th><th class="n">Lifetime sales</th><th style="width:23mm">Last seen online</th><th class="res">Result</th></tr>
+    </thead>
+    <tbody>
+      <tr class="mid"><td class="sn">221400016865</td><td>ASTER CEDAR</td><td>19 Jul 2026</td><td class="n">38</td><td class="n">1 807</td><td>20 Jul 2026</td><td class="res"><div class="line"></div></td></tr>
+      <tr class="mid"><td class="sn">221400017152</td><td>Bur Dubai</td><td>3 Jun 2026</td><td class="n">84</td><td class="n">1 688</td><td>5 Jun 2026</td><td class="res"><div class="line"></div></td></tr>
+      <tr><td class="sn">221400016265</td><td>Al Ain Road</td><td>1 Jul 2026</td><td class="n">56</td><td class="n">449</td><td>no record</td><td class="res"><div class="line"></div></td></tr>
+      <tr><td class="sn">221400016179</td><td>Dubai</td><td>5 Dec 2025</td><td class="n">264</td><td class="n">233</td><td>5 Dec 2025</td><td class="res"><div class="line"></div></td></tr>
+    </tbody>
+  </table>
+
+  <div class="checks">
+    <div>
+      <h3>Answer these four, in order</h3>
+      <ol class="steps">
+        <li>Is the machine physically at the address? If not, where did it go and who moved it?</li>
+        <li>Is it powered on? Check the socket and the breaker, not only the machine.</li>
+        <li>Is there stock loaded? An empty machine takes no payments.</li>
+        <li>Does the screen show an error, or is it simply dark?</li>
+      </ol>
+    </div>
+    <div>
+      <h3>Before you leave</h3>
+      <ol class="steps">
+        <li>Run one test payment and record the response code.</li>
+        <li>Confirm the terminal appears online in the back office.</li>
+        <li>If the machine was removed from site, report the new location so it can be taken off the active list.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="avoid">
+  <h2><span class="badge b3">Reference</span> What normal looks like</h2>
+  <p class="intro">Use these numbers to judge what you find on site. A terminal below 1&nbsp;% needs no work, whatever the customer says.</p>
+
+  <table>
+    <thead>
+      <tr><th style="width:46mm">Operator</th><th class="n" style="width:24mm">Attempts in August</th><th class="n" style="width:22mm">Connection errors</th><th class="n" style="width:14mm">Rate</th><th>Assessment</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="op">tazizi</td><td class="n">12 069</td><td class="n">10</td><td class="n">0.08 %</td><td>Benchmark &mdash; this is achievable</td></tr>
+      <tr><td>fuelup</td><td class="n">2 075</td><td class="n">1</td><td class="n">0.05 %</td><td>Excellent</td></tr>
+      <tr><td class="op">modern-vending</td><td class="n">22 792</td><td class="n">79</td><td class="n">0.35 %</td><td>Largest fleet, healthy</td></tr>
+      <tr><td>coffepoint</td><td class="n">2 859</td><td class="n">5</td><td class="n">0.17 %</td><td>Healthy</td></tr>
+      <tr><td>awafi-vending</td><td class="n">3 499</td><td class="n">15</td><td class="n">0.43 %</td><td>Healthy</td></tr>
+      <tr><td>ginco-general-trading</td><td class="n">4 708</td><td class="n">27</td><td class="n">0.57 %</td><td>Healthy</td></tr>
+      <tr class="mid"><td>vendotek-uae</td><td class="n">1 059</td><td class="n">20</td><td class="n">1.89 %</td><td>Watch, no visit needed yet</td></tr>
+      <tr class="mid"><td class="op">alameed</td><td class="n">288</td><td class="n">12</td><td class="n">4.17 %</td><td>Worst rate in the fleet &mdash; small fleet, one terminal listed above</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note calm">
+    <b>Company-wide the problem is already solved.</b> Connection errors fell from 10 932 in April to 576 in August &mdash; a 95&nbsp;% drop &mdash; after the data-centre migration was completed. Excluding the dead terminal in Priority 1, the whole fleet now runs at 0.52&nbsp;%. This list is the last of it: eleven machines, not a fleet-wide fault.
+  </div>
+</section>
+
+<footer>
+  <p><b>CE (communication error)</b> is written by the terminal itself when the payment host does not answer in time. The transaction never reaches the bank, so the card and the customer are not at fault &mdash; the link between terminal and host is.</p>
+  <p>Figures cover 1&ndash;25 August 2026 and are taken from the payment records, counted by terminal local time. Return this sheet with the Result column filled in for every line, including the ones you found working.</p>
+</footer>
+
+</body>
+</html>
