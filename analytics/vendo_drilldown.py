@@ -257,6 +257,68 @@ select to_char(date_trunc('week', ts), 'YYYY-MM-DD') as week_start,
 from fc where ts >= '2026-06-01'
 group by 1 order by 1"""
 
+Q18 = """
+select case when to_timestamp(case when u.last_seen_at > 100000000000 then u.last_seen_at/1000.0 else u.last_seen_at end) > now() - interval '30 days'
+            then 'на связи (30 дней)' else 'молчит' end as link,
+       case when coalesce(u.address,'') <> '' then 'адрес есть' else 'адреса нет' end as addr,
+       count(*) as units
+from vendotek_unit u
+where not exists (select 1 from vendotek_vend v where v.unit_id = u.id)
+group by 1, 2 order by 1, 2"""
+
+Q19 = """
+select u.sn, coalesce(nullif(u.address,''), '—') as address,
+       coalesce(nullif(u.city,''), '—') as city,
+       to_char(to_timestamp(case when u.last_seen_at > 100000000000 then u.last_seen_at/1000.0 else u.last_seen_at end), 'YYYY-MM-DD') as last_seen
+from vendotek_unit u
+where not exists (select 1 from vendotek_vend v where v.unit_id = u.id)
+  and to_timestamp(case when u.last_seen_at > 100000000000 then u.last_seen_at/1000.0 else u.last_seen_at end) > now() - interval '7 days'
+  and coalesce(u.address,'') <> ''
+order by u.sn limit 40"""
+
+# soco — парк развлечений: посетители прикладывают к нашему POS свою MiFare-карту
+# с балансом для игровых устройств. POS видит непонятную карту и отклоняет её.
+# Это не отказ в оплате и не потерянная продажа — покупки не было вовсе.
+SOCO = "'soco-br-of-majid-al-futtaim'"
+
+Q20 = f"""
+select coalesce(nullif(card, ''), '(пусто)') as application_label,
+       coalesce(nullif(entry, ''), '(пусто)') as pos_entry_mode,
+       coalesce(nullif(aid, ''), '(пусто)') as aid,
+       coalesce(nullif(pan, ''), '(пусто)') as pan,
+       count(*) as cnt
+from (
+  select f.org, c.application_label as card, c.pos_entry_mode as entry,
+         c.aid, c.pan, coalesce(c.response_code,'') as code, f.approved
+  from fc f join vendotek_payment_cashless c on c.payment_id = f.id
+) t
+where org = {SOCO} and not approved and code = ''
+group by 1, 2, 3, 4 order by 5 desc limit 20"""
+
+Q21 = f"""
+select to_char(date_trunc('month', ts), 'YYYY-MM') as month,
+       count(*) filter (where org <> {SOCO}) as attempts_no_soco,
+       count(*) filter (where org <> {SOCO} and not approved) as declined_no_soco,
+       round(100.0 * count(*) filter (where org <> {SOCO} and not approved)
+             / nullif(count(*) filter (where org <> {SOCO}), 0), 2) as pct_no_soco,
+       round(100.0 * count(*) filter (where not approved) / count(*), 2) as pct_all
+from fc where ts >= '2025-12-01'
+group by 1 order by 1"""
+
+Q22 = f"""
+select to_char(date_trunc('month', ts), 'YYYY-MM') as month,
+       count(*) filter (where not approved and code = '' and org = {SOCO}) as empty_soco,
+       count(*) filter (where not approved and code = '' and org <> {SOCO}) as empty_others,
+       count(*) filter (where not approved and code = 'CE') as ce
+from fc where ts >= '2025-12-01'
+group by 1 order by 1"""
+
+Q23 = f"""
+select count(*) as soco_empty_all_time,
+       round(100.0 * count(*) / (select count(*) from fc
+                                 where not approved and code = ''), 1) as share_of_all_empty
+from fc where not approved and code = '' and org = {SOCO}"""
+
 QUERIES = [
 
 ("1. ТОП-30 АВТОМАТОВ ПО ПОТЕРЯННОЙ ВЫРУЧКЕ", BASE + """
@@ -387,6 +449,16 @@ from (
 ("16. CE ПО ОРГАНИЗАЦИЯМ: МАРТ-АПРЕЛЬ vs ПОСЛЕДУЮЩИЕ МЕСЯЦЫ", BASE + Q16),
 
 ("17. ПОНЕДЕЛЬНАЯ ДИНАМИКА ТЕХНИЧЕСКИХ ОТКАЗОВ С ИЮНЯ", BASE + Q17),
+("18. НЕЗАПУЩЕННЫЕ: СВЯЗЬ x АДРЕС", Q18),
+
+("19. НА СВЯЗИ ЗА 7 ДНЕЙ И С АДРЕСОМ — СПИСОК НА ЗАПУСК", Q19),
+("20. SOCO: ЧТО ВИДИТ ТЕРМИНАЛ ПРИ ПУСТОМ КОДЕ (подпись MiFare)", BASE + Q20),
+
+("21. ОТКАЗЫ ПО МЕСЯЦАМ БЕЗ SOCO — НАСТОЯЩИЙ УРОВЕНЬ", BASE + Q21),
+
+("22. ПУСТОЙ КОД: SOCO ПРОТИВ ОСТАЛЬНЫХ", BASE + Q22),
+
+("23. ДОЛЯ SOCO ВО ВСЕХ ПУСТЫХ КОДАХ ЗА ВСЮ ИСТОРИЮ", BASE + Q23),
 ]
 
 def main():
