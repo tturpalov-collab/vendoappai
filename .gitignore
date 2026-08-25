@@ -1,0 +1,15 @@
+# secrets — никогда не коммитим
+.env
+analytics/.env
+*.pem
+*.key
+id_rsa*
+
+# выгрузки данных
+analytics/out/*
+!analytics/out/.gitkeep
+
+# служебное
+.DS_Store
+__pycache__/
+*.pyc
