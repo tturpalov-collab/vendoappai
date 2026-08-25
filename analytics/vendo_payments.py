@@ -120,9 +120,9 @@ def get_password():
                 return line.split("=", 1)[1].strip().strip("'\"")
     return getpass.getpass("Пароль пользователя vendo_ai_reader: ")
 
-def connect(driver, password):
+def connect(driver, password, dbname=None):
     kw = dict(host="127.0.0.1", port=LOCAL_PORT, user=PGUSER,
-              password=password, dbname=PGDATABASE, connect_timeout=15)
+              password=password, dbname=dbname or PGDATABASE, connect_timeout=15)
     if driver == "psycopg":
         import psycopg
         return psycopg.connect(**kw)
@@ -157,10 +157,70 @@ def table(cur, sql, args=None, maxw=42):
     return rows
 
 # ── шаг 4: разведка ───────────────────────────────────────────────────────────
+def list_databases(cur):
+    """Все базы на сервере, куда пускают."""
+    return [r[0] for r in q(cur, """
+        select datname from pg_database
+        where not datistemplate and datallowconn order by 1""")]
+
+def count_tables(cur):
+    rows = q(cur, """
+        select count(*) from information_schema.tables
+        where table_schema not in ('pg_catalog','information_schema')
+          and table_type = 'BASE TABLE'""")
+    return rows[0][0] if rows else 0
+
+def pick_database(driver, password, first_conn, first_db):
+    """Ищет базу, в которой реально есть таблицы."""
+    cur = first_conn.cursor()
+    n = count_tables(cur)
+    dbs = list_databases(cur)
+    say(f"  базы на сервере: {', '.join(dbs) if dbs else '—'}")
+    if n > 0:
+        say(f"  в '{first_db}' таблиц: {n} — работаем с ней")
+        cur.close()
+        return first_conn, first_db
+    say(f"  в '{first_db}' таблиц нет — смотрю остальные")
+    cur.close(); first_conn.close()
+
+    best, best_n, best_conn = None, 0, None
+    for db in dbs:
+        if db == first_db:
+            continue
+        try:
+            c = connect(driver, password, db)
+        except Exception as e:
+            say(f"    {db}: не пускает ({str(e).splitlines()[0][:60]})")
+            continue
+        c.autocommit = True
+        cu = c.cursor()
+        k = count_tables(cu)
+        cu.close()
+        say(f"    {db}: таблиц {k}")
+        if k > best_n:
+            if best_conn:
+                best_conn.close()
+            best, best_n, best_conn = db, k, c
+        else:
+            c.close()
+    if not best_conn:
+        sys.exit("Ни в одной базе не видно таблиц — возможно, у vendo_ai_reader "
+                 "нет прав на нужную схему. Покажите отчёт ассистенту.")
+    say(f"  выбрана база: {best} ({best_n} таблиц)")
+    return best_conn, best
+
 def explore(cur):
     head("1. БАЗА")
     table(cur, "select current_database() as db, current_user as role, "
                "substring(version() from 'PostgreSQL [0-9.]+') as version")
+
+    say("\n  схемы и число таблиц:")
+    table(cur, """
+        select table_schema, count(*) as tables
+        from information_schema.tables
+        where table_schema not in ('pg_catalog','information_schema')
+          and table_type = 'BASE TABLE'
+        group by 1 order by 2 desc""")
 
     head("2. ТАБЛИЦЫ: РАЗМЕР И ОЦЕНКА СТРОК (топ-40)")
     table(cur, """
@@ -280,9 +340,13 @@ def main():
     except Exception as e:
         sys.exit(f"Не подключился к базе: {str(e).splitlines()[0]}\nПокажите это ассистенту.")
     conn.autocommit = True
-    cur = conn.cursor()
 
     say(f"Отчёт собран: {datetime.now():%Y-%m-%d %H:%M}")
+    head("0. ВЫБОР БАЗЫ")
+    conn, dbname = pick_database(driver, pw, conn, PGDATABASE)
+    conn.autocommit = True
+    cur = conn.cursor()
+
     cands = explore(cur)
 
     head("7. КАНДИДАТЫ В ПЛАТЁЖНЫЕ ТАБЛИЦЫ")
