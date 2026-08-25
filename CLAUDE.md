@@ -65,7 +65,67 @@ ssh -L 54322:vendo-app.cvwxd0jliglu.eu-central-1.rds.amazonaws.com:5432 ec2-user
 
 ## Схема
 
-_Пока не разобрана — заполнить после первого запуска `00_discover.sql`._
+База `app` на сервере (не `postgres` — та пустая), PostgreSQL 18.3, схема `public`,
+16 таблиц с префиксом `vendotek_`. Данные — зеркало внешней системы Vendotek:
+почти везде есть `synced_at`, у части таблиц `dirty` / `external`.
+
+**Предметная область: вендинговые автоматы в ОАЭ.** Валюта во всех продажах — `AED`,
+организация `vendotek-uae`. Цены в `vendotek_planogram_product.price` — `bigint`,
+предположительно в филсах (1 AED = 100 fils), проверять перед использованием.
+
+### Платежи и продажи
+
+| Таблица | Строк | Роль |
+|---|---|---|
+| `vendotek_payment` | 535 224 | **Факт-таблица платежей.** `cash_amount`, `cashless_amount`, `approved`, `name` (SALE), `pos_localtime_at` |
+| `vendotek_payment_cashless` | 467 044 | Детализация безнала: `amount`, `pan` (маскированный), `application_label`, `pos_entry_mode`, `response_code`, `rrn`, `auth_id`, `issuer`, `transaction_duration_s`, `vend_duration_s` |
+| `vendotek_payment_cash` | 68 180 | Детализация наличных: `amount`, `type` = CASH |
+| `vendotek_vend` | 531 075 | Выдача товара: `unit_id`, `product_id`, `product_name`, `completed`, `cancelled`, `currency`, `terminal_id`, `organization_name` |
+| `vendotek_vend_planogram_product_link` | 385 268 | Связь продажи с товарами |
+| `vendotek_vend_fiscal` | мало | Фискализация: `qr`, `address`, `place` |
+
+### Справочники и телеметрия
+
+| Таблица | Строк | Роль |
+|---|---|---|
+| `vendotek_unit` | 1 008 | Автоматы: `sn`, `tid`, `location_name`, `address`, `city`, `region`, `country`, `tz` |
+| `vendotek_org` | 27 | Организации, `distributor_id` |
+| `vendotek_planogram_product` | 54 935 | Товары: `name`, `price`, `vat`, `code`, `gtin` |
+| `vendotek_planogram`, `..._planogram_product_link` | мало | Планограммы автоматов |
+| `vendotek_module`, `..._module_detail`, `..._module_link` | 6 435 / 17 878 / 3 432 | Телеметрия модулей автоматов |
+| `databasechangelog`, `databasechangeloglock` | 15 / — | Служебные (Liquibase), в аналитике не участвуют |
+
+### Связи
+
+**Внешних ключей в базе нет** — связи только логические, по `uuid`:
+
+```
+vendotek_payment.vend_id           -> vendotek_vend.id
+vendotek_payment_cash.payment_id   -> vendotek_payment.id
+vendotek_payment_cashless.payment_id -> vendotek_payment.id
+vendotek_vend.unit_id              -> vendotek_unit.id
+vendotek_unit.owned_by_org_id      -> vendotek_org.id
+vendotek_vend_planogram_product_link.vend_id -> vendotek_vend.id
+```
+
+Проверка сходимости: 68 180 (cash) + 467 044 (cashless) = 535 224 = ровно число
+платежей. То есть у каждого платежа ровно одна строка детализации.
+
+### Ловушки — читать перед любым запросом
+
+1. **`synced_at` — это НЕ дата операции**, а момент выгрузки из внешней системы
+   (вся выгрузка приходится на 19–25 августа 2026). Агрегировать по нему нельзя:
+   получится вся выручка в одном месяце. Реальное время операции —
+   `vendotek_payment.pos_localtime_at` (`timestamp without time zone`, локальное
+   время терминала; смещение в `pos_localtime_offset_s`). Диапазон данных:
+   **2025-05-06 … 2026-08-25**.
+2. **Сумма платежа = `cash_amount + cashless_amount`.** По отдельности каждое поле
+   заполнено только для своего типа оплаты, у остальных ноль — средний чек по одной
+   колонке занижен в разы.
+3. **Статусов-enum нет.** Успех платежа — булев `approved`; у безнала дополнительно
+   `response_code` (`000` = успех). Отмена продажи — `vendotek_vend.cancelled`.
+4. В ранних данных (май–сентябрь 2025) много транзакций на 0.01–0.04 AED — похоже на
+   тестовые прогоны. Для бизнес-метрик их стоит отфильтровывать.
 
 ## Правила
 

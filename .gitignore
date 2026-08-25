@@ -16,3 +16,4 @@ __pycache__/
 
 # отчёты разведки
 analytics/vendo_payments_report.txt
+analytics/vendo_analytics_report.txt
