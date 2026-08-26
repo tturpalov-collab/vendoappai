@@ -1,0 +1,534 @@
+<title>Три месяца Tazizi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f4f6f8; --surface:#ffffff; --surface-2:#eceff3;
+  --ink:#0f141b; --ink-2:#485462; --ink-3:#727f8e;
+  --rule:#dbe0e7; --rule-strong:#c3cad4; --accent:#1c5cab;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+  --crit:#d43b3a; --warn:#b57c00;
+  --crit-soft:#fbeceb; --warn-soft:#fbf3e0; --good-soft:#e7f6ef;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#0e1116; --surface:#161a21; --surface-2:#1e242c;
+    --ink:#eef1f5; --ink-2:#b3bdc9; --ink-3:#87919e;
+    --rule:#2a313a; --rule-strong:#3a434e; --accent:#5b9ceb;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+    --crit:#e66767; --warn:#c98500;
+    --crit-soft:#2c1a1a; --warn-soft:#2a2214; --good-soft:#152520;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#0e1116; --surface:#161a21; --surface-2:#1e242c;
+  --ink:#eef1f5; --ink-2:#b3bdc9; --ink-3:#87919e;
+  --rule:#2a313a; --rule-strong:#3a434e; --accent:#5b9ceb;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+  --crit:#e66767; --warn:#c98500;
+  --crit-soft:#2c1a1a; --warn-soft:#2a2214; --good-soft:#152520;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:940px;margin:0 auto;padding:0 24px 80px}
+
+.masthead{padding:52px 0 28px;border-bottom:2px solid var(--ink)}
+.eyebrow{
+  font-family:"IBM Plex Mono", ui-monospace, monospace;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px;
+}
+h1{font-size:clamp(32px,5.5vw,50px);line-height:1.05;letter-spacing:-.025em;font-weight:700;margin:0 0 16px;text-wrap:balance}
+.standfirst{font-size:clamp(16.5px,2vw,19px);line-height:1.5;color:var(--ink-2);max-width:58ch;margin:0}
+.meta{
+  display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:22px;
+  font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-3);
+}
+.meta b{color:var(--ink-2);font-weight:500}
+
+.kpis{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--rule);border:1px solid var(--rule);margin:36px 0 0;
+}
+.kpi{background:var(--surface);padding:17px 17px 19px}
+.kpi .lab{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:9px;
+}
+.kpi .val{font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .val.good{color:var(--s3)}
+.kpi .val.crit{color:var(--crit)}
+.kpi .sub{font-size:12.5px;color:var(--ink-3);margin-top:5px;line-height:1.35}
+
+section{margin-top:56px}
+.sec-head{display:flex;align-items:baseline;gap:13px;margin-bottom:6px;flex-wrap:wrap}
+.tag{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);
+  border:1px solid var(--rule-strong);border-radius:2px;padding:3px 7px;white-space:nowrap;
+}
+.tag.alarm{color:var(--crit);border-color:var(--crit)}
+.tag.ok{color:var(--s3);border-color:var(--s3)}
+h2{font-size:clamp(22px,3.2vw,29px);line-height:1.2;letter-spacing:-.02em;font-weight:600;margin:0;text-wrap:balance}
+.lede{font-size:16.5px;color:var(--ink-2);max-width:64ch;margin:13px 0 0}
+p{max-width:66ch}
+
+.card{background:var(--surface);border:1px solid var(--rule);padding:20px 20px 14px;margin-top:24px;position:relative}
+.card-title{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);margin:0 0 4px;
+}
+.card-note{font-size:13.5px;color:var(--ink-3);margin:10px 0 0;max-width:70ch}
+.chart{width:100%;overflow-x:auto}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.tip{
+  position:absolute;pointer-events:none;opacity:0;transition:opacity .1s;
+  background:var(--ink);color:var(--bg);padding:7px 10px;border-radius:3px;
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.5;
+  white-space:nowrap;z-index:9;transform:translate(-50%,-118%);
+}
+.tip b{font-weight:600}
+
+.callout{border-left:3px solid var(--crit);background:var(--crit-soft);padding:16px 20px;margin-top:24px}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.callout.good{border-left-color:var(--s3);background:var(--good-soft)}
+.callout p{margin:0;max-width:64ch;font-size:15.5px}
+.callout .big{font-size:25px;font-weight:600;letter-spacing:-.02em;display:block;margin-bottom:4px;font-variant-numeric:tabular-nums}
+
+.tbl-wrap{overflow-x:auto;margin-top:22px;border:1px solid var(--rule);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--rule);white-space:nowrap}
+th{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:500;background:var(--surface-2);
+}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+td.sn{font-family:"IBM Plex Mono",monospace;font-size:13px}
+tbody tr:last-child td{border-bottom:none}
+tr.tot td{font-weight:600;background:var(--surface-2)}
+tr.hot td{background:var(--crit-soft)}
+tr.warm td{background:var(--warn-soft)}
+
+.chip{
+  display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:2px;font-weight:500;
+}
+.chip.hot{background:var(--crit);color:#fff}
+.chip.warm{background:var(--warn);color:#fff}
+.chip.calm{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--rule-strong)}
+
+code{font-family:"IBM Plex Mono",monospace;font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:2px}
+strong{font-weight:600}
+
+.actions{counter-reset:step;margin-top:24px;display:grid;gap:13px}
+.act{background:var(--surface);border:1px solid var(--rule);border-top:2px solid var(--accent);padding:17px 19px}
+.act h4{margin:0 0 6px;font-size:15.5px;font-weight:600;display:flex;gap:10px;align-items:baseline}
+.act h4::before{counter-increment:step;content:counter(step);font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);font-weight:600}
+.act p{margin:0;font-size:14.5px;color:var(--ink-2)}
+
+footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink-3)}
+footer p{max-width:70ch;margin:0 0 8px}
+@media (max-width:640px){ .kpis{grid-template-columns:repeat(2,1fr)} }
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Сводный отчёт по организации · июнь — август 2026</p>
+  <h1>Три месяца Tazizi</h1>
+  <p class="standfirst">610 270 AED за квартал, парк вырос с 32 до 42 терминалов, а доля отказов упала вчетверо — с 4,40 % до 1,04 %. Технических сбоев практически не осталось.</p>
+  <div class="meta">
+    <span>Период <b>01.06 — 26.08.2026</b></span>
+    <span>Платежей <b>37 536</b></span>
+    <span>Терминалов <b>43</b></span>
+    <span>Оплата <b>100 % безнал</b></span>
+  </div>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><div class="lab">Выручка за квартал</div><div class="val">610 270</div><div class="sub">AED, успешные платежи</div></div>
+  <div class="kpi"><div class="lab">Дневная выручка</div><div class="val good">+15 %</div><div class="sub">6 508 → 7 481 AED в день</div></div>
+  <div class="kpi"><div class="lab">Доля отказов</div><div class="val good">1,04 %</div><div class="sub">было 4,40 % в июне</div></div>
+  <div class="kpi"><div class="lab">Технические сбои</div><div class="val good">−96 %</div><div class="sub">450 → 16 за месяц</div></div>
+</div>
+
+<section>
+  <div class="sec-head"><span class="tag">Рост</span><h2>Август сильнее июля, хотя выглядит слабее</h2></div>
+  <p class="lede">В абсолютных числах август проседает — 194,5 тыс. против 220,5 тыс. в июле. Но в августе всего 26 дней данных, и по дневной выручке это лучший месяц квартала.</p>
+
+  <div class="card">
+    <p class="card-title">Выручка по месяцам, AED</p>
+    <div class="chart" id="c-rev"></div>
+    <p class="card-note">Пунктиром — прогноз августа до конца месяца по дневному темпу: 231 912 AED, то есть +5,2 % к июлю.</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Выручка в день — сопоставимая метрика</p>
+    <div class="chart" id="c-day"></div>
+    <p class="card-note">Июнь → июль +9,3 %, июль → август +5,2 %. Рост не прекращался.</p>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Месяц</th><th class="n">Дней</th><th class="n">Терминалов</th><th class="n">Платежей</th><th class="n">Выручка</th><th class="n">В день</th><th class="n">Средний чек</th><th class="n">Медиана</th></tr></thead>
+      <tbody>
+        <tr><td>Июнь</td><td class="n">30</td><td class="n">32</td><td class="n">11 765</td><td class="n">195 248</td><td class="n">6 508</td><td class="n">16,60</td><td class="n">16,00</td></tr>
+        <tr><td>Июль</td><td class="n">31</td><td class="n">33</td><td class="n">13 726</td><td class="n">220 516</td><td class="n">7 113</td><td class="n">16,07</td><td class="n">15,50</td></tr>
+        <tr><td>Август*</td><td class="n">26</td><td class="n">42</td><td class="n">12 045</td><td class="n">194 507</td><td class="n">7 481</td><td class="n">16,15</td><td class="n">15,00</td></tr>
+        <tr class="tot"><td>Квартал</td><td class="n">87</td><td class="n">43</td><td class="n">37 536</td><td class="n">610 270</td><td class="n">7 015</td><td class="n">16,26</td><td class="n">15,50</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="card-note" style="margin-top:10px">* Август — неполный месяц, данные по 26-е число включительно.</p>
+
+  <p>Средний чек держится ровно — 16,60 → 16,07 → 16,15. Медиана чуть снижается (16,00 → 15,00), что обычно означает приток новых точек с более дешёвым ассортиментом, а не падение спроса на старых.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag ok">Отказы</span><h2>Технические сбои почти исчезли</h2></div>
+  <p class="lede">Главный результат квартала. Доля отказов упала с 4,40 % до 1,04 %, а технических сбоев — с 450 штук в июне до 16 в августе.</p>
+
+  <div class="card">
+    <p class="card-title">Отказы по типам, штук</p>
+    <div class="chart" id="c-err"></div>
+    <div class="legend">
+      <span><i style="background:var(--crit)"></i>Технические — связь, таймаут, нет ответа хоста</span>
+      <span><i style="background:var(--s1)"></i>Банковские — решение эмитента</span>
+    </div>
+    <p class="card-note">Технические отказы чинятся инфраструктурой. Банковские — нет: это чаще всего нехватка средств на карте.</p>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Месяц</th><th class="n">Отказов</th><th class="n">Доля</th><th class="n">CE</th><th class="n">Нет ответа</th><th class="n">Таймаут</th><th class="n">Хост недоступен</th><th class="n">Нет средств</th><th class="n">Прочие банк.</th></tr></thead>
+      <tbody>
+        <tr><td>Июнь</td><td class="n">541</td><td class="n">4,40 %</td><td class="n">59</td><td class="n">338</td><td class="n">48</td><td class="n">5</td><td class="n">52</td><td class="n">39</td></tr>
+        <tr><td>Июль</td><td class="n">247</td><td class="n">1,77 %</td><td class="n">71</td><td class="n">20</td><td class="n">0</td><td class="n">12</td><td class="n">67</td><td class="n">77</td></tr>
+        <tr><td>Август</td><td class="n">126</td><td class="n">1,04 %</td><td class="n">10</td><td class="n">2</td><td class="n">0</td><td class="n">4</td><td class="n">74</td><td class="n">36</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout good">
+    <p><span class="big">87 % августовских отказов — решение банка</span>
+    110 отказов из 126 — это эмитент: чаще всего нехватка средств на карте. Технических сбоев осталось 16 штук на 12 171 попытку, то есть <strong>0,13 %</strong>. Со стороны инфраструктуры чинить больше нечего.</p>
+  </div>
+
+  <p>Отдельно стоит отметить июньские <strong>338 «нет ответа хоста»</strong>. Это не проблема Tazizi: в том же июне такой всплеск прошёл по всем организациям сразу — платформенное событие с пиком на неделе 22 июня. К июлю от него осталось 20 случаев, к августу — два.</p>
+
+  <div class="callout good">
+    <p><span class="big">Лучший показатель в компании</span>
+    По ошибкам связи Tazizi — эталон среди всех клиентов: 0,08 % за август против 0,52 % в среднем по парку. Это тот уровень, на который стоит равнять остальных.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag alarm">Внимание</span><h2>Один из лучших терминалов молчит</h2></div>
+
+  <div class="callout">
+    <p><span class="big">221400014646 «Driven»</span>
+    Второй терминал по выручке за квартал — 38 441 AED, 2 226 платежей. <strong>Последняя продажа 13 августа</strong>, тринадцать дней тишины. В августовской пятёрке лидеров его уже нет. При прежнем темпе около 17 400 AED в месяц простой стоил примерно 7 500 AED.</p>
+  </div>
+
+  <p>Ещё две записи выглядят тревожно, но проблемой не являются. <code>221400016990</code> «Innovo Ghaff Woods (OLD)» остановился 11 августа — и в тот же день начал продавать <code>221400013955</code> «Innovo Ghaf Woods». Это замена терминала на точке, а не потеря.</p>
+
+  <p>И три терминала с копеечными платежами — <code>221400010854</code> (3 платежа на 0,30 AED), <code>221400026217</code> и <code>221400026297</code> — это пусконаладочные прогоны, попавшие в статистику. Они же дают 1 540 платежей дешевле 1 AED по всему кварталу: 4 % счётчика платежей и 155 AED выручки.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag">Парк</span><h2>Плюс десять точек за август</h2></div>
+  <p class="lede">Парк вырос с 32 до 42 терминалов — на 31 % за месяц. Именно это, а не спад продаж, объясняет снижение выручки на терминал.</p>
+
+  <div class="card">
+    <p class="card-title">Терминалы и выручка на терминал в день</p>
+    <div class="chart" id="c-fleet"></div>
+    <p class="card-note">Новые точки ещё не вышли на режим: десять августовских дали 32 859 AED — 17 % месячной выручки.</p>
+  </div>
+
+  <p>Если считать только по зрелым терминалам, работавшим все три месяца, август даёт <strong>194 AED на терминал в день</strong> против 216 в июле и 203 в июне. Разрыв объясняется не спадом, а тем, что часть зрелых точек тоже была недоступна: «Driven» встал 13 августа, «Innovo» менялся 11-го.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag">Лидеры</span><h2>Топ-5 терминалов</h2></div>
+  <p class="lede">Первая пятёрка даёт 30,9 % выручки, первая десятка — 51,1 %.</p>
+
+  <div class="card">
+    <p class="card-title">Выручка за квартал, AED</p>
+    <div class="chart" id="c-top"></div>
+    <p class="card-note">Справа — средний платёж. Разброс от 13,82 до 18,19 AED: ассортимент на точках разный.</p>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Терминал</th><th>Точка</th><th class="n">Платежей</th><th class="n">Выручка</th><th class="n">Средний</th><th class="n">Медиана</th><th class="n">Платежей в день</th><th class="n">Отказов</th></tr></thead>
+      <tbody>
+        <tr><td class="sn">221400016978</td><td>W&amp;Co.</td><td class="n">3 606</td><td class="n">58 899</td><td class="n">16,33</td><td class="n">16,00</td><td class="n">41,9</td><td class="n">1,85 %</td></tr>
+        <tr><td class="sn">221400014646</td><td>Driven</td><td class="n">2 226</td><td class="n">38 441</td><td class="n">17,27</td><td class="n">16,00</td><td class="n">31,4</td><td class="n">2,37 %</td></tr>
+        <tr><td class="sn">221400010813</td><td>McCone Properties</td><td class="n">1 780</td><td class="n">32 384</td><td class="n">18,19</td><td class="n">18,00</td><td class="n">24,4</td><td class="n">2,14 %</td></tr>
+        <tr><td class="sn">221400014265</td><td>Allsopp &amp; Allsopp</td><td class="n">2 202</td><td class="n">30 427</td><td class="n">13,82</td><td class="n">12,00</td><td class="n">27,9</td><td class="n">1,65 %</td></tr>
+        <tr><td class="sn">221400013957</td><td>INFORMA</td><td class="n">2 070</td><td class="n">28 607</td><td class="n">13,82</td><td class="n">12,00</td><td class="n">31,4</td><td class="n">1,05 %</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout good">
+    <p><span class="big">Парк ровный, без перекоса</span>
+    Средняя выручка на терминал 14 192 AED, медиана 12 260 — разница всего в 1,16 раза. По компании в целом разрыв между средним и медианой трёхкратный: там пара флагманов тянет всю статистику. У Tazizi точки сопоставимы между собой, и это здоровая структура.</p>
+  </div>
+
+  <p>Лидер квартала <strong>W&amp;Co.</strong> держит первое место все три месяца подряд: 19 680 → 21 540 → 17 679 AED. Состав пятёрки при этом меняется — в августе в неё вошли <code>Haus &amp; Haus</code> (новая точка, 13 169 AED с 3 августа) и <code>AECOM</code>, а «Driven» и «Allsopp &amp; Allsopp» выпали.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag">Спрос</span><h2>Офисный профиль в чистом виде</h2></div>
+  <p class="lede">Более половины выручки приходится на обеденные четыре часа, а выходные почти пустые.</p>
+
+  <div class="card">
+    <p class="card-title">Выручка по часам суток, AED</p>
+    <div class="chart" id="c-hour"></div>
+    <p class="card-note">Пик в 12:00 — 18 % всей выручки. Окно 11:00—14:00 даёт 54,4 %.</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Выручка по дням недели, AED</p>
+    <div class="chart" id="c-dow"></div>
+    <p class="card-note">Суббота и воскресенье вместе — 1,2 % выручки. Пятница уже на 36 % ниже среднего буднего дня.</p>
+  </div>
+
+  <p>Точки Tazizi стоят в офисах — это видно и по названиям (<code>AECOM</code>, <code>ALEC</code>, <code>DSV</code>, <code>ARAMEX</code>, <code>L'Oreal</code>, <code>Savills</code>), и по профилю спроса. Практический вывод: обслуживать и пополнять автоматы нужно до 08:00 или после 18:00, когда через них проходит меньше 5 % дневной выручки. Простой в обеденный час стоит в разы дороже.</p>
+
+  <p>Пять лучших дней квартала — <strong>все во второй половине августа</strong>: 24-го (13 419 AED), 25-го, 19-го, 18-го и 20-го. Пять худших — воскресенья, и это норма, а не сбой.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="tag">Детали</span><h2>Что ещё видно в данных</h2></div>
+
+  <div class="card">
+    <p class="card-title">Распределение чека</p>
+    <div class="chart" id="c-check"></div>
+    <p class="card-note">Ядро 10—50 AED: 68 % платежей и 87 % выручки.</p>
+  </div>
+
+  <p><strong>Оплата полностью безналичная.</strong> За квартал ни одного наличного платежа — 100 % безнал во все три месяца. Visa занимает 72 % транзакций, Mastercard 28 %.</p>
+
+  <p><strong>Скорость обслуживания стабильна:</strong> транзакция 3,7—3,9 секунды, выдача товара 7,3—7,5 секунды, без ухудшения при росте парка. Отменённых выдач 0,16—0,26 % — на уровне погрешности.</p>
+
+  <div class="callout warn">
+    <p><span class="big">Названия товаров не читаются</span>
+    В поле товара вместо названий стоят идентификаторы вида <code>OArRiHL9HuWUCI0f5WFL</code>. Ассортиментную аналитику — что продаётся, что залёживается, как менять планограмму — по таким данным построить нельзя. Это чинится на стороне интеграции.</p>
+  </div>
+</section>
+
+<footer>
+  <p>Источник: платёжные таблицы Vendotek, организация <code>tazizi</code>, период с 1 июня по 26 августа 2026 включительно. Валюта AED. Выручка считается по успешным платежам, сумма платежа — наличные плюс безнал, время операции — локальное время терминала.</p>
+  <p>Промахи по чужой карте (посетитель прикладывает неплатёжную карту к POS) исключены из всех метрик отказов — иначе доля отказов завышается. У Tazizi таких событий единицы.</p>
+</footer>
+
+</div>
+
+
+<script>
+const RU = n => n.toLocaleString('ru-RU');
+const cs = getComputedStyle(document.documentElement);
+const C = k => cs.getPropertyValue(k).trim();
+
+function svgEl(tag, attrs){
+  const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function tipFor(host){
+  const t = document.createElement('div');
+  t.className = 'tip'; host.appendChild(t);
+  return {
+    show(x, y, html){ t.innerHTML = html; t.style.left = x+'px'; t.style.top = y+'px'; t.style.opacity = 1; },
+    hide(){ t.style.opacity = 0; }
+  };
+}
+
+function barChart(sel, data, opt){
+  const host = document.querySelector(sel), card = host.closest('.card'), tip = tipFor(card);
+  const W = 900, H = opt.height || 240, PL = 52, PR = 12, PT = 14, PB = 34;
+  const iw = W - PL - PR, ih = H - PT - PB;
+  const max = opt.max || Math.max(...data.map(d => d.v + (d.extra || 0)));
+  const bw = iw / data.length;
+  const svg = svgEl('svg', {viewBox:`0 0 ${W} ${H}`, role:'img', 'aria-label':opt.aria || ''});
+  [0,1,2,3,4].forEach(i => {
+    const y = PT + ih - ih*i/4;
+    svg.appendChild(svgEl('line', {x1:PL, x2:W-PR, y1:y, y2:y, stroke:C('--rule'), 'stroke-width':1}));
+    const t = svgEl('text', {x:PL-9, y:y+4, 'text-anchor':'end', fill:C('--ink-3'),
+      'font-size':11, 'font-family':'IBM Plex Mono, monospace'});
+    t.textContent = opt.fmtAxis ? opt.fmtAxis(max*i/4) : RU(Math.round(max*i/4));
+    svg.appendChild(t);
+  });
+  data.forEach((d,i) => {
+    const x = PL + i*bw + bw*0.18, w = bw*0.64;
+    const h = ih * d.v / max, y = PT + ih - h;
+    svg.appendChild(svgEl('rect', {x, y, width:w, height:Math.max(h,1.5), rx:3, fill:d.color || C('--s1')}));
+    if (d.extra){
+      const eh = ih * d.extra / max;
+      svg.appendChild(svgEl('rect', {x, y: y - eh - 2, width:w, height:eh, rx:3,
+        fill:C('--s3'), opacity:.3, stroke:C('--s3'), 'stroke-width':1, 'stroke-dasharray':'3 2'}));
+    }
+    const hit = svgEl('rect', {x:PL + i*bw, y:PT, width:bw, height:ih, fill:'transparent'});
+    hit.addEventListener('mouseenter', () => {
+      const bb = card.getBoundingClientRect(), sb = svg.getBoundingClientRect();
+      tip.show((PL + i*bw + bw/2)/W*sb.width + (sb.left-bb.left), y/H*sb.height + (sb.top-bb.top), d.tip);
+    });
+    hit.addEventListener('mouseleave', () => tip.hide());
+    svg.appendChild(hit);
+    if (!opt.everyOther || i % opt.everyOther === 0){
+      const t = svgEl('text', {x:PL + i*bw + bw/2, y:H-12, 'text-anchor':'middle',
+        fill:C('--ink-3'), 'font-size':10.5, 'font-family':'IBM Plex Mono, monospace'});
+      t.textContent = d.l;
+      svg.appendChild(t);
+    }
+  });
+  host.appendChild(svg);
+}
+
+function hBar(sel, data, opt){
+  const host = document.querySelector(sel), card = host.closest('.card'), tip = tipFor(card);
+  const rowH = opt.rowH || 30, PL = opt.labelW || 210, PR = opt.rightW || 150;
+  const W = 900, H = data.length * rowH + 10, iw = W - PL - PR;
+  const max = Math.max(...data.map(d => d.v));
+  const svg = svgEl('svg', {viewBox:`0 0 ${W} ${H}`, role:'img', 'aria-label':opt.aria || ''});
+  data.forEach((d,i) => {
+    const y = i*rowH + 5, bh = rowH - 12, w = Math.max(iw * d.v / max, 2);
+    const lab = svgEl('text', {x:PL-12, y:y + bh/2 + 4, 'text-anchor':'end', fill:C('--ink-2'),
+      'font-size':12.5, 'font-family':'IBM Plex Mono, monospace'});
+    lab.textContent = d.l;
+    svg.appendChild(lab);
+    svg.appendChild(svgEl('rect', {x:PL, y, width:w, height:bh, rx:3, fill:d.color || C('--s1')}));
+    const val = svgEl('text', {x:PL + w + 9, y:y + bh/2 + 4, fill:C('--ink-2'),
+      'font-size':12, 'font-family':'IBM Plex Mono, monospace'});
+    val.textContent = d.r;
+    svg.appendChild(val);
+    const hit = svgEl('rect', {x:0, y:y-3, width:W, height:rowH, fill:'transparent'});
+    hit.addEventListener('mouseenter', () => {
+      const bb = card.getBoundingClientRect(), sb = svg.getBoundingClientRect();
+      tip.show((PL + w/2)/W*sb.width + (sb.left-bb.left), y/H*sb.height + (sb.top-bb.top), d.tip);
+    });
+    hit.addEventListener('mouseleave', () => tip.hide());
+    svg.appendChild(hit);
+  });
+  host.appendChild(svg);
+}
+
+
+function groupBar(sel, data, opt){
+  opt = opt || {};
+  const cols = opt.colors || [C('--s1'), C('--s2')];
+  const host = document.querySelector(sel), card = host.closest('.card'), tip = tipFor(card);
+  const W = 900, H = 250, PL = 52, PR = 12, PT = 14, PB = 38;
+  const iw = W - PL - PR, ih = H - PT - PB;
+  const max = Math.max(...data.flatMap(d => [d.a, d.b]));
+  const bw = iw / data.length;
+  const svg = svgEl('svg', {viewBox:`0 0 ${W} ${H}`, role:'img', 'aria-label':opt.aria || ''});
+  [0,1,2,3,4].forEach(i => {
+    const y = PT + ih - ih*i/4;
+    svg.appendChild(svgEl('line', {x1:PL, x2:W-PR, y1:y, y2:y, stroke:C('--rule'), 'stroke-width':1}));
+    const t = svgEl('text', {x:PL-9, y:y+4, 'text-anchor':'end', fill:C('--ink-3'),
+      'font-size':11, 'font-family':'IBM Plex Mono, monospace'});
+    t.textContent = opt.fmtAxis ? opt.fmtAxis(max*i/4) : RU(Math.round(max*i/4));
+    svg.appendChild(t);
+  });
+  data.forEach((d,i) => {
+    const x0 = PL + i*bw;
+    [['a',0],['b',1]].forEach(([k,j]) => {
+      const w = bw * 0.3, x = x0 + bw*0.16 + j*(w+4);
+      const h = ih * d[k] / max, y = PT + ih - h;
+      svg.appendChild(svgEl('rect', {x, y, width:w, height:Math.max(h,1.5), rx:3, fill:cols[j]}));
+    });
+    const hit = svgEl('rect', {x:x0, y:PT, width:bw, height:ih, fill:'transparent'});
+    hit.addEventListener('mouseenter', () => {
+      const bb = card.getBoundingClientRect(), sb = svg.getBoundingClientRect();
+      tip.show((x0 + bw/2)/W*sb.width + (sb.left-bb.left),
+               (PT + ih - ih*Math.max(d.a,d.b)/max)/H*sb.height + (sb.top-bb.top), d.tip);
+    });
+    hit.addEventListener('mouseleave', () => tip.hide());
+    svg.appendChild(hit);
+    const t = svgEl('text', {x:x0 + bw/2, y:H-14, 'text-anchor':'middle', fill:C('--ink-3'),
+      'font-size':11.5, 'font-family':'IBM Plex Mono, monospace'});
+    t.textContent = d.l;
+    svg.appendChild(t);
+  });
+  host.appendChild(svg);
+}
+
+/* ── графики ────────────────────────────────────────── */
+barChart('#c-rev', [
+  {l:'Июнь', v:195248, tip:'<b>Июнь</b><br>195 248 AED<br>30 дней · 32 терминала'},
+  {l:'Июль', v:220516, tip:'<b>Июль</b><br>220 516 AED<br>31 день · 33 терминала'},
+  {l:'Август', v:194507, extra:37405, color:C('--s3'),
+   tip:'<b>Август</b><br>194 507 AED за 26 дней<br>прогноз на месяц 231 912'}
+], {height:230, aria:'Выручка по месяцам', fmtAxis: v => Math.round(v/1000)+'k'});
+
+barChart('#c-day', [
+  {l:'Июнь', v:6508, tip:'<b>Июнь</b><br>6 508 AED в день'},
+  {l:'Июль', v:7113, tip:'<b>Июль</b><br>7 113 AED в день<br>+9,3 % к июню'},
+  {l:'Август', v:7481, color:C('--s3'), tip:'<b>Август</b><br>7 481 AED в день<br>+5,2 % к июлю'}
+], {height:200, aria:'Выручка в день', fmtAxis: v => RU(Math.round(v))});
+
+groupBar('#c-err', [
+  {l:'Июнь', a:450, b:91, tip:'<b>Июнь</b><br>технических 450<br>банковских 91<br>доля отказов 4,40 %'},
+  {l:'Июль', a:103, b:144, tip:'<b>Июль</b><br>технических 103<br>банковских 144<br>доля отказов 1,77 %'},
+  {l:'Август', a:16, b:110, tip:'<b>Август</b><br>технических 16<br>банковских 110<br>доля отказов 1,04 %'}
+], {fmtAxis: v => RU(Math.round(v)), colors:[C('--crit'), C('--s1')]});
+
+hBar('#c-fleet', [
+  {l:'Июнь · 32 терминала', v:203, r:'203 AED на терминал в день', color:C('--s1'),
+   tip:'<b>Июнь</b><br>32 терминала<br>203 AED на терминал в день'},
+  {l:'Июль · 33 терминала', v:216, r:'216 AED', color:C('--s3'),
+   tip:'<b>Июль</b><br>33 терминала<br>216 AED на терминал в день'},
+  {l:'Август · 42 терминала', v:178, r:'178 AED · разбавлено новыми', color:C('--s2'),
+   tip:'<b>Август</b><br>42 терминала, из них 10 новых<br>178 AED на терминал в день<br>по зрелым точкам 194'}
+], {rowH:34, labelW:190, rightW:230, aria:'Выручка на терминал в день'});
+
+hBar('#c-top', [
+  {l:'W&Co.', v:58899, r:'58 899 · чек 16,33', color:C('--s3'),
+   tip:'<b>221400016978 · W&Co.</b><br>3 606 платежей<br>58 899 AED · 41,9 платежа в день'},
+  {l:'Driven', v:38441, r:'38 441 · чек 17,27', color:C('--crit'),
+   tip:'<b>221400014646 · Driven</b><br>2 226 платежей<br>38 441 AED<br>молчит с 13 августа'},
+  {l:'McCone Properties', v:32384, r:'32 384 · чек 18,19', color:C('--s1'),
+   tip:'<b>221400010813 · McCone Properties</b><br>1 780 платежей<br>32 384 AED'},
+  {l:'Allsopp & Allsopp', v:30427, r:'30 427 · чек 13,82', color:C('--s1'),
+   tip:'<b>221400014265 · Allsopp & Allsopp</b><br>2 202 платежа<br>30 427 AED'},
+  {l:'INFORMA', v:28607, r:'28 607 · чек 13,82', color:C('--s1'),
+   tip:'<b>221400013957 · INFORMA</b><br>2 070 платежей<br>28 607 AED · отказов всего 1,05 %'}
+], {rowH:34, labelW:180, rightW:190, aria:'Топ-5 терминалов'});
+
+const hours = [143,136,88,47,157,346,1064,10852,33405,48024,49588,72456,109951,88787,
+               61318,45931,37778,23682,12469,7655,3575,1866,676,277];
+barChart('#c-hour', hours.map((v,i) => ({
+  l: String(i).padStart(2,'0'), v,
+  color: (i>=11 && i<=14) ? C('--s2') : C('--s1'),
+  tip:`<b>${String(i).padStart(2,'0')}:00</b><br>${RU(v)} AED`
+})), {height:230, everyOther:2, aria:'Выручка по часам',
+      fmtAxis: v => Math.round(v/1000)+'k'});
+
+barChart('#c-dow', [
+  ['Пн',128277],['Вт',139396],['Ср',128309],['Чт',123437],['Пт',83355],['Сб',5568],['Вс',1929]
+].map(([l,v],i) => ({l, v, color: i>=5 ? C('--ink-3') : (i===4 ? C('--s2') : C('--s1')),
+  tip:`<b>${l}</b><br>${RU(v)} AED`})),
+  {height:200, aria:'Выручка по дням недели', fmtAxis: v => Math.round(v/1000)+'k'});
+
+const tp = 37532, tr = 610272;
+groupBar('#c-check', [
+  ['до 1', 1540, 155],['1—5', 366, 1326],['5—10', 9672, 54879],
+  ['10—20', 15993, 249425],['20—50', 9544, 279239],['50+', 417, 25248]
+].map(([l,p,r]) => ({
+  l, a: p/tp*100, b: r/tr*100,
+  tip:`<b>${l} AED</b><br>платежей ${RU(p)} · ${(p/tp*100).toFixed(1)} %<br>выручка ${RU(r)} · ${(r/tr*100).toFixed(1)} %`
+})), {fmtAxis: v => Math.round(v) + '%', colors:[C('--s1'), C('--s2')]});
+</script>
