@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tazizi — Quarterly Payment Report</title>
+<style>
+@page { size: A4; margin: 15mm 14mm 13mm; }
+*{ box-sizing:border-box; }
+body{ margin:0; background:#fff; color:#111;
+  font-family:"Helvetica Neue",Helvetica,Arial,"DejaVu Sans",sans-serif;
+  font-size:9.6pt; line-height:1.45; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+
+header{ border-bottom:2.2pt solid #111; padding-bottom:8pt; margin-bottom:12pt; }
+.eyebrow{ font-size:7.4pt; letter-spacing:.14em; text-transform:uppercase; color:#555; margin:0 0 4pt; }
+h1{ font-size:20pt; line-height:1.1; margin:0 0 6pt; letter-spacing:-.015em; }
+.sub{ font-size:9.9pt; color:#333; margin:0; max-width:156mm; }
+
+.kpis{ display:flex; gap:1pt; background:#ddd; border:0.8pt solid #ddd; margin:12pt 0 0; }
+.kpi{ flex:1; background:#fff; padding:8pt 9pt 9pt; }
+.kpi .lab{ font-size:6.8pt; letter-spacing:.1em; text-transform:uppercase; color:#666; margin-bottom:4pt; }
+.kpi .val{ font-size:17pt; font-weight:700; letter-spacing:-.02em; line-height:1.05; }
+.kpi .val.up{ color:#1b8f5f; }
+.kpi .sub2{ font-size:7.6pt; color:#666; margin-top:3pt; line-height:1.3; }
+
+section{ margin-top:11pt; }
+h2{ font-size:12.6pt; margin:0 0 4pt; letter-spacing:-.01em; }
+h2 .num{ font-family:"Courier New",monospace; font-size:9pt; color:#888; margin-right:6pt; }
+p{ margin:0 0 5pt; max-width:168mm; }
+.lead{ color:#333; }
+
+.chart{ margin:5pt 0 2pt; }
+.cap{ font-size:7.5pt; color:#666; margin:0 0 4pt; }
+.two{ display:block; }
+.two > div{ margin-bottom:2pt; }
+
+table{ width:100%; border-collapse:collapse; font-size:8.5pt; margin:5pt 0 3pt; }
+th{ text-align:left; font-size:6.9pt; letter-spacing:.07em; text-transform:uppercase;
+  color:#444; font-weight:600; border-bottom:1pt solid #111; padding:4pt 5pt; background:#f2f2f2; }
+td{ padding:3.8pt 5pt; border-bottom:0.6pt solid #ccc; }
+td.n{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+tr.tot td{ font-weight:700; background:#f2f2f2; }
+.sn{ font-family:"Courier New","DejaVu Sans Mono",monospace; font-size:8.6pt; font-weight:700; white-space:nowrap; }
+
+.note{ border-left:2.4pt solid #1b8f5f; background:#eef7f1; padding:6pt 10pt; margin:6pt 0; font-size:9.1pt; }
+.note.warn{ border-left-color:#b3261e; background:#fbeeed; }
+.note.info{ border-left-color:#1f4d8f; background:#eef3fa; }
+.note p{ margin:0; max-width:none; }
+.note .big{ font-size:14pt; font-weight:700; display:block; margin-bottom:3pt; letter-spacing:-.01em; }
+
+code{ font-family:"Courier New",monospace; font-size:8.5pt; background:#f0f0f0; padding:0.5pt 3pt; }
+footer{ margin-top:15pt; padding-top:8pt; border-top:0.8pt solid #999; font-size:7.6pt; color:#666; }
+footer p{ margin:0 0 3pt; max-width:170mm; }
+h2{ break-after:avoid; }
+.chart, .note, .two{ break-inside:avoid; }
+thead{ display:table-header-group; }
+tr{ break-inside:avoid; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Payment report &middot; Tazizi &middot; June &ndash; August 2026</p>
+  <h1>Quarterly Payment Report</h1>
+  <p class="sub">Revenue of 610,270 AED across 37,536 payments. The terminal network grew from 32 to 42 units, and the decline rate fell fourfold &mdash; from 4.40 % to 1.04 %. Technical failures have all but disappeared.</p>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><div class="lab">Revenue, quarter</div><div class="val">610,270</div><div class="sub2">AED, approved payments</div></div>
+  <div class="kpi"><div class="lab">Revenue per day</div><div class="val up">+15 %</div><div class="sub2">6,508 &rarr; 7,481 AED</div></div>
+  <div class="kpi"><div class="lab">Decline rate</div><div class="val up">1.04 %</div><div class="sub2">down from 4.40 % in June</div></div>
+  <div class="kpi"><div class="lab">Technical failures</div><div class="val up">&minus;96 %</div><div class="sub2">450 &rarr; 16 per month</div></div>
+</div>
+
+<section>
+  <h2><span class="num">1</span>Revenue</h2>
+  <p class="lead">August looks lower in absolute terms &mdash; 194,507 AED against 220,516 in July &mdash; but it holds only 26 days of data. Measured per day, it is the strongest month of the quarter.</p>
+
+  <div class="two">
+    <div>
+      <div class="chart"><svg viewBox="0 0 520 104" width="100%" role="img"><line x1="44" x2="514" y1="86.0" y2="86.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="89.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">0k</text><line x1="44" x2="514" y1="46.0" y2="46.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="49.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">123k</text><line x1="44" x2="514" y1="6.0" y2="6.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="9.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">247k</text><rect x="70.6" y="22.8" width="103.4" height="63.2" rx="1.5" fill="#2a78d6"/><text x="122.3" y="99" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">June</text><rect x="227.3" y="14.6" width="103.4" height="71.4" rx="1.5" fill="#2a78d6"/><text x="279.0" y="99" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">July</text><rect x="384.0" y="23.0" width="103.4" height="63.0" rx="1.5" fill="#1b8f5f"/><rect x="384.0" y="9.4" width="103.4" height="12.1" rx="1.5" fill="#1b8f5f" opacity="0.28" stroke="#1b8f5f" stroke-width="0.6" stroke-dasharray="2 1.5"/><text x="435.7" y="99" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">August</text></svg></div>
+      <p class="cap">Revenue by month, AED. The dashed extension projects August to a full month: 231,912 AED.</p>
+    </div>
+    <div>
+      <div class="chart"><svg viewBox="0 0 520 98" width="100%" role="img"><line x1="44" x2="514" y1="80.0" y2="80.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="83.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">0</text><line x1="44" x2="514" y1="43.0" y2="43.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="46.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">4 189</text><line x1="44" x2="514" y1="6.0" y2="6.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="9.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">8 379</text><rect x="70.6" y="22.5" width="103.4" height="57.5" rx="1.5" fill="#2a78d6"/><text x="122.3" y="93" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">June</text><rect x="227.3" y="17.2" width="103.4" height="62.8" rx="1.5" fill="#2a78d6"/><text x="279.0" y="93" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">July</text><rect x="384.0" y="13.9" width="103.4" height="66.1" rx="1.5" fill="#1b8f5f"/><text x="435.7" y="93" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">August</text></svg></div>
+      <p class="cap">Revenue per day &mdash; the comparable measure. June &rarr; July +9.3 %, July &rarr; August +5.2 %.</p>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>Month</th><th class="n">Days</th><th class="n">Terminals</th><th class="n">Payments</th><th class="n">Revenue, AED</th><th class="n">Per day</th><th class="n">Average ticket</th><th class="n">Median</th></tr></thead>
+    <tbody>
+      <tr><td>June</td><td class="n">30</td><td class="n">32</td><td class="n">11,765</td><td class="n">195,248</td><td class="n">6,508</td><td class="n">16.60</td><td class="n">16.00</td></tr>
+      <tr><td>July</td><td class="n">31</td><td class="n">33</td><td class="n">13,726</td><td class="n">220,516</td><td class="n">7,113</td><td class="n">16.07</td><td class="n">15.50</td></tr>
+      <tr><td>August*</td><td class="n">26</td><td class="n">42</td><td class="n">12,045</td><td class="n">194,507</td><td class="n">7,481</td><td class="n">16.15</td><td class="n">15.00</td></tr>
+      <tr class="tot"><td>Quarter</td><td class="n">87</td><td class="n">43</td><td class="n">37,536</td><td class="n">610,270</td><td class="n">7,015</td><td class="n">16.26</td><td class="n">15.50</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">* August is a partial month &mdash; data runs to the 26th inclusive.</p>
+
+  <p>The average ticket is steady at 16.07&ndash;16.60 AED. The median dips slightly, from 16.00 to 15.00, which is what happens when new sites with a lower-priced range join &mdash; not a fall in demand at existing ones.</p>
+</section>
+
+<section>
+  <h2><span class="num">2</span>Payment reliability</h2>
+  <p class="lead">The headline result of the quarter. Declines fell from 4.40 % to 1.04 %, and technical failures from 450 in June to 16 in August.</p>
+
+  <div class="chart"><svg viewBox="0 0 520 98" width="100%" role="img"><line x1="44" x2="514" y1="80.0" y2="80.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="83.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">0.0%</text><line x1="44" x2="514" y1="43.0" y2="43.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="46.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">2.5%</text><line x1="44" x2="514" y1="6.0" y2="6.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="9.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">4.9%</text><rect x="70.6" y="13.9" width="103.4" height="66.1" rx="1.5" fill="#b3261e"/><text x="122.3" y="93" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">June</text><rect x="227.3" y="53.4" width="103.4" height="26.6" rx="1.5" fill="#d97a1a"/><text x="279.0" y="93" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">July</text><rect x="384.0" y="64.4" width="103.4" height="15.6" rx="1.5" fill="#1b8f5f"/><text x="435.7" y="93" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">August</text></svg></div>
+  <p class="cap">Decline rate by month, per cent of all payment attempts.</p>
+
+  <table>
+    <thead><tr><th>Month</th><th class="n">Attempts</th><th class="n">Declines</th><th class="n">Rate</th><th class="n">Technical</th><th class="n">Issuer</th><th class="n">Technical rate</th></tr></thead>
+    <tbody>
+      <tr><td>June</td><td class="n">12,306</td><td class="n">541</td><td class="n">4.40 %</td><td class="n">450</td><td class="n">91</td><td class="n">3.66 %</td></tr>
+      <tr><td>July</td><td class="n">13,973</td><td class="n">247</td><td class="n">1.77 %</td><td class="n">103</td><td class="n">144</td><td class="n">0.74 %</td></tr>
+      <tr><td>August</td><td class="n">12,171</td><td class="n">126</td><td class="n">1.04 %</td><td class="n">16</td><td class="n">110</td><td class="n">0.13 %</td></tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead><tr><th>Month</th><th class="n">Connection error</th><th class="n">No host response</th><th class="n">Timeout</th><th class="n">Host unavailable</th><th class="n">Insufficient funds</th><th class="n">Other issuer</th></tr></thead>
+    <tbody>
+      <tr><td>June</td><td class="n">59</td><td class="n">338</td><td class="n">48</td><td class="n">5</td><td class="n">52</td><td class="n">39</td></tr>
+      <tr><td>July</td><td class="n">71</td><td class="n">20</td><td class="n">0</td><td class="n">12</td><td class="n">67</td><td class="n">77</td></tr>
+      <tr><td>August</td><td class="n">10</td><td class="n">2</td><td class="n">0</td><td class="n">4</td><td class="n">74</td><td class="n">36</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <p><span class="big">87 % of August declines are issuer decisions</span>
+    110 of 126 declines came from the card issuer, most often insufficient funds &mdash; outside anyone's control. Technical failures are down to 16 across 12,171 attempts, or <b>0.13 %</b>. There is essentially nothing left to fix on the infrastructure side.</p>
+  </div>
+
+  <p>The 338 &ldquo;no host response&rdquo; events in June came from a platform-side incident rather than anything at the sites: terminals were not receiving a reply from the payment host, with the peak in the week of 22 June. By July this was down to 20 cases, and by August to two.</p>
+</section>
+
+<section>
+  <h2><span class="num">3</span>Terminal network</h2>
+  <p class="lead">The network grew from 32 to 42 terminals &mdash; ten new sites in August, a 31 % increase in a single month.</p>
+
+  <table>
+    <thead><tr><th>Month</th><th class="n">Terminals</th><th class="n">Revenue per terminal</th><th class="n">Per terminal per day</th><th class="n">Payments per terminal per day</th></tr></thead>
+    <tbody>
+      <tr><td>June</td><td class="n">32</td><td class="n">6,101</td><td class="n">203</td><td class="n">12.3</td></tr>
+      <tr><td>July</td><td class="n">33</td><td class="n">6,682</td><td class="n">216</td><td class="n">13.4</td></tr>
+      <tr><td>August</td><td class="n">42</td><td class="n">4,631</td><td class="n">178</td><td class="n">11.0</td></tr>
+    </tbody>
+  </table>
+
+  <p>Revenue per terminal dips in August, and the reason is arithmetic rather than performance: ten terminals joined mid-month and contributed 32,859 AED, about 17 % of the month's revenue, without a full month to earn it. Counting only the terminals that traded through all three months, August yields <b>194 AED per terminal per day</b> against 216 in July.</p>
+</section>
+
+<section>
+  <h2><span class="num">4</span>Leading terminals</h2>
+  <p class="lead">The top five account for 30.9 % of quarterly revenue, the top ten for 51.1 %.</p>
+
+  <table>
+    <thead><tr><th>Terminal</th><th>Site</th><th class="n">Payments</th><th class="n">Revenue, AED</th><th class="n">Average payment</th><th class="n">Median</th><th class="n">Payments / day</th><th class="n">Declines</th></tr></thead>
+    <tbody>
+      <tr><td class="sn">221400016978</td><td>W&amp;Co.</td><td class="n">3,606</td><td class="n">58,899</td><td class="n">16.33</td><td class="n">16.00</td><td class="n">41.9</td><td class="n">1.85 %</td></tr>
+      <tr><td class="sn">221400014646</td><td>Driven</td><td class="n">2,226</td><td class="n">38,441</td><td class="n">17.27</td><td class="n">16.00</td><td class="n">31.4</td><td class="n">2.37 %</td></tr>
+      <tr><td class="sn">221400010813</td><td>McCone Properties</td><td class="n">1,780</td><td class="n">32,384</td><td class="n">18.19</td><td class="n">18.00</td><td class="n">24.4</td><td class="n">2.14 %</td></tr>
+      <tr><td class="sn">221400014265</td><td>Allsopp &amp; Allsopp</td><td class="n">2,202</td><td class="n">30,427</td><td class="n">13.82</td><td class="n">12.00</td><td class="n">27.9</td><td class="n">1.65 %</td></tr>
+      <tr><td class="sn">221400013957</td><td>INFORMA</td><td class="n">2,070</td><td class="n">28,607</td><td class="n">13.82</td><td class="n">12.00</td><td class="n">31.4</td><td class="n">1.05 %</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>W&amp;Co.</b> led every month of the quarter: 19,680 &rarr; 21,540 &rarr; 17,679 AED. The rest of the top five moved around &mdash; <code>Haus &amp; Haus</code>, a site opened on 3 August, and <code>AECOM</code> entered it in August.</p>
+
+  <div class="note info">
+    <p><span class="big">An evenly balanced network</span>
+    Average revenue per terminal is 14,192 AED, the median 12,260 &mdash; a gap of only 1.16&times;. Revenue does not depend on one or two flagship sites, so losing any single terminal does not move the quarterly result much.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">5</span>One terminal needs attention</h2>
+  <div class="note warn">
+    <p><span class="big">221400014646 &mdash; Driven</span>
+    The second-highest earning terminal of the quarter at 38,441 AED. <b>Its last sale was on 13 August</b> &mdash; thirteen days of silence, and it no longer appears in the August top five. At its earlier rate of roughly 17,400 AED per month, the downtime has cost about 7,500 AED so far.</p>
+  </div>
+  <p>Two other terminals stopped in the same period without cause for concern. <code>221400016990</code> (Innovo Ghaff Woods, marked OLD) stopped on 11 August, and <code>221400013955</code> (Innovo Ghaf Woods) began trading the same day &mdash; a unit replacement at the same site rather than a loss.</p>
+</section>
+
+<section style="break-before:page">
+  <h2><span class="num">6</span>Demand profile</h2>
+  <p class="lead">More than half of all revenue falls into the four hours around lunch, and weekends are close to empty.</p>
+
+  <div class="chart"><svg viewBox="0 0 520 112" width="100%" role="img"><line x1="44" x2="514" y1="94.0" y2="94.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="97.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">0k</text><line x1="44" x2="514" y1="50.0" y2="50.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="53.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">62k</text><line x1="44" x2="514" y1="6.0" y2="6.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="9.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">123k</text><rect x="47.3" y="93.9" width="12.9" height="1.0" rx="1.5" fill="#2a78d6"/><text x="53.8" y="107" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">00</text><rect x="66.9" y="93.9" width="12.9" height="1.0" rx="1.5" fill="#2a78d6"/><rect x="86.5" y="93.9" width="12.9" height="1.0" rx="1.5" fill="#2a78d6"/><rect x="106.1" y="94.0" width="12.9" height="1.0" rx="1.5" fill="#2a78d6"/><text x="112.5" y="107" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">03</text><rect x="125.7" y="93.9" width="12.9" height="1.0" rx="1.5" fill="#2a78d6"/><rect x="145.2" y="93.8" width="12.9" height="1.0" rx="1.5" fill="#2a78d6"/><rect x="164.8" y="93.2" width="12.9" height="1.0" rx="1.5" fill="#2a78d6"/><text x="171.3" y="107" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">06</text><rect x="184.4" y="86.2" width="12.9" height="7.8" rx="1.5" fill="#2a78d6"/><rect x="204.0" y="70.1" width="12.9" height="23.9" rx="1.5" fill="#2a78d6"/><rect x="223.6" y="59.7" width="12.9" height="34.3" rx="1.5" fill="#2a78d6"/><text x="230.0" y="107" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">09</text><rect x="243.2" y="58.6" width="12.9" height="35.4" rx="1.5" fill="#2a78d6"/><rect x="262.7" y="42.2" width="12.9" height="51.8" rx="1.5" fill="#d97a1a"/><rect x="282.3" y="15.4" width="12.9" height="78.6" rx="1.5" fill="#d97a1a"/><text x="288.8" y="107" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">12</text><rect x="301.9" y="30.6" width="12.9" height="63.4" rx="1.5" fill="#d97a1a"/><rect x="321.5" y="50.2" width="12.9" height="43.8" rx="1.5" fill="#d97a1a"/><rect x="341.1" y="61.2" width="12.9" height="32.8" rx="1.5" fill="#2a78d6"/><text x="347.5" y="107" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">15</text><rect x="360.7" y="67.0" width="12.9" height="27.0" rx="1.5" fill="#2a78d6"/><rect x="380.2" y="77.1" width="12.9" height="16.9" rx="1.5" fill="#2a78d6"/><rect x="399.8" y="85.1" width="12.9" height="8.9" rx="1.5" fill="#2a78d6"/><text x="406.3" y="107" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">18</text><rect x="419.4" y="88.5" width="12.9" height="5.5" rx="1.5" fill="#2a78d6"/><rect x="439.0" y="91.4" width="12.9" height="2.6" rx="1.5" fill="#2a78d6"/><rect x="458.6" y="92.7" width="12.9" height="1.3" rx="1.5" fill="#2a78d6"/><text x="465.0" y="107" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">21</text><rect x="478.2" y="93.5" width="12.9" height="1.0" rx="1.5" fill="#2a78d6"/><rect x="497.7" y="93.8" width="12.9" height="1.0" rx="1.5" fill="#2a78d6"/></svg></div>
+  <p class="cap">Revenue by hour of day, AED. The peak at 12:00 alone carries 18 % of revenue; the 11:00&ndash;14:00 window carries 54.4 %.</p>
+
+  <div class="chart"><svg viewBox="0 0 520 100" width="100%" role="img"><line x1="44" x2="514" y1="82.0" y2="82.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="85.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">0k</text><line x1="44" x2="514" y1="44.0" y2="44.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="47.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">78k</text><line x1="44" x2="514" y1="6.0" y2="6.0" stroke="#ddd" stroke-width="0.7"/><text x="39" y="9.0" text-anchor="end" font-size="6.5" fill="#777" font-family="Helvetica,Arial,sans-serif">156k</text><rect x="55.4" y="19.6" width="44.3" height="62.4" rx="1.5" fill="#2a78d6"/><text x="77.6" y="95" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">Mon</text><rect x="122.6" y="14.1" width="44.3" height="67.9" rx="1.5" fill="#2a78d6"/><text x="144.7" y="95" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">Tue</text><rect x="189.7" y="19.5" width="44.3" height="62.5" rx="1.5" fill="#2a78d6"/><text x="211.9" y="95" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">Wed</text><rect x="256.8" y="21.9" width="44.3" height="60.1" rx="1.5" fill="#2a78d6"/><text x="279.0" y="95" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">Thu</text><rect x="324.0" y="41.4" width="44.3" height="40.6" rx="1.5" fill="#d97a1a"/><text x="346.1" y="95" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">Fri</text><rect x="391.1" y="79.3" width="44.3" height="2.7" rx="1.5" fill="#999"/><text x="413.3" y="95" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">Sat</text><rect x="458.3" y="81.1" width="44.3" height="1.0" rx="1.5" fill="#999"/><text x="480.4" y="95" text-anchor="middle" font-size="6.5" fill="#666" font-family="Helvetica,Arial,sans-serif">Sun</text></svg></div>
+  <p class="cap">Revenue by day of week, AED. Saturday and Sunday together account for 1.2 %; Friday already runs 36 % below a typical weekday.</p>
+
+  <p>This is an office-hours profile in its purest form, consistent with the sites themselves. The practical implication is scheduling: restocking and servicing before 08:00 or after 18:00 costs almost nothing in lost sales, while the same downtime at lunchtime is several times more expensive.</p>
+
+  <p>The five strongest days of the quarter all fell in the second half of August &mdash; the 24th (13,419 AED), 25th, 19th, 18th and 20th.</p>
+</section>
+
+<section>
+  <h2><span class="num">7</span>Payment mix and service quality</h2>
+  <p><b>Payments are entirely cashless.</b> Not a single cash payment was recorded in any of the three months. Visa accounts for 72 % of transactions and Mastercard for 28 %.</p>
+  <p><b>Ticket sizes cluster tightly.</b> Payments between 10 and 50 AED make up 68 % of transactions and 87 % of revenue.</p>
+  <p><b>Service speed held steady as the network grew:</b> 3.7&ndash;3.9 seconds per transaction and 7.3&ndash;7.5 seconds to dispense, with no deterioration between June and August. Cancelled dispenses stayed between 0.16 % and 0.26 %.</p>
+  <p>Product-level reporting is not yet available: the product identifiers arriving from the machines are not human-readable, so what sells and what does not cannot be broken out. This is being addressed on the integration side.</p>
+</section>
+
+<footer>
+  <p>Period: 1 June to 26 August 2026 inclusive. Currency AED. Revenue counts approved payments only; payment value is cash plus cashless; timestamps are terminal local time. August is a partial month and is normalised per day wherever the comparison matters.</p>
+  <p>Mis-taps &mdash; where a customer presents a non-payment card to the terminal &mdash; are excluded from all decline metrics, since no purchase was attempted. Such events are negligible across this network.</p>
+</footer>
+
+</body>
+</html>
