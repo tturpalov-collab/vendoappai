@@ -379,6 +379,30 @@ def main():
         group by 1
         order by min(taps)""", maxw=20)
 
+    # ── 9. сколько человек за этими прикладываниями ──────────────────────────
+    head("9. ПРИКЛАДЫВАНИЯ ПРОТИВ ЧИСЛА ГОСТЕЙ")
+    say("  Тапы подряд на одном автомате с разрывом меньше 3 минут — это один")
+    say("  человек, который пробует ещё раз. guest_tries — оценка числа гостей,")
+    say("  и именно её надо брать для расчёта недополученных продаж.")
+    table(cur, BASE + f"""
+        , t as (
+          select sn, ts,
+                 case when lag(ts) over (partition by sn order by ts) is null
+                        or ts - lag(ts) over (partition by sn order by ts)
+                             > interval '3 minute'
+                      then 1 else 0 end as new_try
+          from f
+          where mistap
+        )
+        select to_char(date_trunc('month', ts), 'YYYY-MM')        as month,
+               count(*)                                           as card_taps,
+               sum(new_try)                                       as guest_tries,
+               round(count(*)::numeric / nullif(sum(new_try), 0), 2) as taps_per_guest
+        from t, lastday
+        where ts >= date_trunc('month', lastday.d) - interval '{MONTHS - 1} month'
+        group by 1
+        order by 1""", maxw=20)
+
     cur.close(); conn.close()
     with open(REPORT, "w", encoding="utf-8") as f:
         f.write("\n".join(out_lines))
