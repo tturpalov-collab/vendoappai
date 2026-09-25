@@ -494,6 +494,74 @@ def main():
         group by 1
         order by 1""", maxw=20)
 
+    # ── 13. упавшие терминалы: встали или просто просели ─────────────────────
+    head("13. УПАВШИЕ ТЕРМИНАЛЫ: ВСТАЛИ ИЛИ ПРОСЕЛИ")
+    say("  days_silent — сколько дней назад была последняя продажа. Ноль-два дня "
+        "означает, что машина работает")
+    say("  и упал оборот; десятки дней — машину выключили или увезли.")
+    table(cur, BASE + """
+        , cut as (select extract(day from d)::int as n,
+                         date_trunc('month', d)::date as cur_m,
+                         (date_trunc('month', d) - interval '1 month')::date as prev_m
+                  from lastday)
+        , t as (
+          select sn, max(loc) as loc, max(org) as org, max(ts)::date as last_sale,
+                 count(*) filter (where ts >= cut.prev_m and ts < cut.cur_m
+                                        and extract(day from ts) <= cut.n) as pays_prev,
+                 count(*) filter (where ts >= cut.cur_m
+                                        and extract(day from ts) <= cut.n) as pays_cur,
+                 sum(amount) filter (where approved and ts >= cut.prev_m and ts < cut.cur_m
+                                           and extract(day from ts) <= cut.n) as rev_prev,
+                 sum(amount) filter (where approved and ts >= cut.cur_m
+                                           and extract(day from ts) <= cut.n) as rev_cur
+          from fc, cut
+          where sn <> '—'
+          group by 1
+        )
+        select sn, loc, org, pays_prev, pays_cur,
+               round(coalesce(rev_prev, 0), 0)                          as rev_prev,
+               round(coalesce(rev_cur, 0), 0)                           as rev_cur,
+               round(coalesce(rev_cur, 0) - coalesce(rev_prev, 0), 0)   as delta,
+               last_sale,
+               (select d from lastday) - last_sale                      as days_silent
+        from t
+        where coalesce(rev_prev, 0) > 0
+        order by coalesce(rev_cur, 0) - coalesce(rev_prev, 0) asc
+        limit 20""", maxw=28)
+
+    # ── 14. дни-выбросы: провалы и всплески относительно соседних дней ───────
+    head("14. ДНИ-ВЫБРОСЫ ЗА 90 ДНЕЙ")
+    say("  Каждый день сравнивается со средним из вчера и завтра: так виден "
+        "разовый провал или всплеск,")
+    say("  а не недельная волна. Показаны дни, где терминалов меньше на 8 %+ "
+        "или выручка отклонилась на 30 %+.")
+    table(cur, BASE + """
+        , d as (
+          select ts::date as day,
+                 count(*)                                         as pays,
+                 round(sum(amount) filter (where approved), 0)     as revenue,
+                 count(distinct sn) filter (where sn <> '—')       as terms
+          from fc, lastday
+          where ts::date > lastday.d - 90
+          group by 1
+        )
+        , n as (
+          select *,
+                 (lag(terms)   over w + lead(terms)   over w) / 2.0 as terms_ref,
+                 (lag(revenue) over w + lead(revenue) over w) / 2.0 as rev_ref
+          from d window w as (order by day)
+        )
+        select day, to_char(day, 'Dy') as dow, pays, revenue, terms,
+               round(terms_ref, 0)                            as terms_ref,
+               round(100.0 * (terms / nullif(terms_ref, 0) - 1), 1)  as terms_pct,
+               round(100.0 * (revenue / nullif(rev_ref, 0) - 1), 1)  as rev_pct
+        from n
+        where terms_ref is not null and rev_ref is not null
+              and (terms < 0.92 * terms_ref
+                   or revenue < 0.70 * rev_ref
+                   or revenue > 1.40 * rev_ref)
+        order by day""", maxw=20)
+
     cur.close(); conn.close()
     with open(REPORT, "w", encoding="utf-8") as f:
         f.write("\n".join(out_lines))
