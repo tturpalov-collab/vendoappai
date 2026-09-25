@@ -431,7 +431,8 @@ def main():
                          (date_trunc('month', d) - interval '1 month')::date as prev_m
                   from lastday)
         , t as (
-          select sn, max(loc) as loc, max(org) as org,
+          select sn, (array_agg(loc order by ts desc))[1] as loc,
+                 (array_agg(org order by ts desc))[1] as org,
                  sum(amount) filter (where approved and ts <  cut.cur_m) as rev_prev,
                  sum(amount) filter (where approved and ts >= cut.cur_m) as rev_cur
           from fc, cut
@@ -505,7 +506,9 @@ def main():
                          (date_trunc('month', d) - interval '1 month')::date as prev_m
                   from lastday)
         , t as (
-          select sn, max(loc) as loc, max(org) as org, max(ts)::date as last_sale,
+          select sn, (array_agg(loc order by ts desc))[1] as loc,
+                 (array_agg(org order by ts desc))[1] as org,
+                 max(ts)::date as last_sale,
                  count(*) filter (where ts >= cut.prev_m and ts < cut.cur_m
                                         and extract(day from ts) <= cut.n) as pays_prev,
                  count(*) filter (where ts >= cut.cur_m
@@ -531,10 +534,11 @@ def main():
 
     # ── 14. дни-выбросы: провалы и всплески относительно соседних дней ───────
     head("14. ДНИ-ВЫБРОСЫ ЗА 90 ДНЕЙ")
-    say("  Каждый день сравнивается со средним из вчера и завтра: так виден "
-        "разовый провал или всплеск,")
-    say("  а не недельная волна. Показаны дни, где терминалов меньше на 8 %+ "
-        "или выручка отклонилась на 30 %+.")
+    say("  База каждого дня — медиана четырёх соседей того же дня недели "
+        "(−14, −7, +7, +14): недельная волна")
+    say("  и разовые всплески её не двигают. Показаны дни, где терминалов "
+        "меньше на 10 %+ или выручка отклонилась на 25-30 %+.")
+    say("  Последний день данных обрезан по времени выгрузки и в расчёт не берётся.")
     table(cur, BASE + """
         , d as (
           select ts::date as day,
@@ -542,24 +546,32 @@ def main():
                  round(sum(amount) filter (where approved), 0)     as revenue,
                  count(distinct sn) filter (where sn <> '—')       as terms
           from fc, lastday
-          where ts::date > lastday.d - 90
+          where ts::date > lastday.d - 90 and ts::date < lastday.d
           group by 1
         )
         , n as (
-          select *,
-                 (lag(terms)   over w + lead(terms)   over w) / 2.0 as terms_ref,
-                 (lag(revenue) over w + lead(revenue) over w) / 2.0 as rev_ref
-          from d window w as (order by day)
+          select d.*, r.terms_ref, r.rev_ref
+          from d
+          cross join lateral (
+            -- медиана по четырём соседям того же дня недели: один всплеск
+            -- не утягивает базу и не превращает соседние дни в «провалы»
+            select percentile_cont(0.5) within group (order by o.terms)::numeric   as terms_ref,
+                   percentile_cont(0.5) within group (order by o.revenue)::numeric as rev_ref
+            from d o
+            where o.day in (d.day - 14, d.day - 7, d.day + 7, d.day + 14)
+              and (select count(*) from d x
+                   where x.day in (d.day - 14, d.day - 7, d.day + 7, d.day + 14)) >= 3
+          ) r
         )
         select day, to_char(day, 'Dy') as dow, pays, revenue, terms,
-               round(terms_ref, 0)                            as terms_ref,
+               round(terms_ref, 0)                                  as terms_ref,
                round(100.0 * (terms / nullif(terms_ref, 0) - 1), 1)  as terms_pct,
                round(100.0 * (revenue / nullif(rev_ref, 0) - 1), 1)  as rev_pct
         from n
         where terms_ref is not null and rev_ref is not null
-              and (terms < 0.92 * terms_ref
-                   or revenue < 0.70 * rev_ref
-                   or revenue > 1.40 * rev_ref)
+              and (terms < 0.90 * terms_ref
+                   or revenue < 0.75 * rev_ref
+                   or revenue > 1.30 * rev_ref)
         order by day""", maxw=20)
 
     cur.close(); conn.close()
