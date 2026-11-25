@@ -161,6 +161,8 @@ def table(cur, sql, args=None, maxw=42):
 # ── настройки отчёта ─────────────────────────────────────────────────────────
 DAYS = int(os.environ.get("DAYS", 45))          # окно подневной таблицы
 TEST_SN = "221400017147"                        # тестовый терминал IntersoftPOS
+# Головная учётка: терминалы регистрируют на неё, на агента переоформляют позже.
+HEAD_ORG = os.environ.get("HEAD_ORG", "vendotek-uae")
 
 # Промах по чужой карте (MiFare) — это не платёж и не отказ, см. CLAUDE.md
 MISTAP = ("coalesce(c.pos_entry_mode,'') = 'CONTACTLESS' "
@@ -188,6 +190,8 @@ with f as (
   left join vendotek_payment_cashless c on c.payment_id = p.id
 ),
 fc as (select * from f where not mistap and sn <> '{TEST_SN}'),
+owner as (select sn, (array_agg(org order by ts desc))[1] as org
+          from fc where sn <> '—' group by 1),
 lastday as (select max(ts)::date as d from fc)
 """
 
@@ -406,20 +410,24 @@ def main():
 
     # ── 8. организации: текущий месяц против прошлого, тот же отрезок ────────
     head("8. ОРГАНИЗАЦИИ: ТЕКУЩИЙ МЕСЯЦ ПРОТИВ ПРОШЛОГО (равные отрезки)")
+    say("  Терминал отнесён к текущему владельцу целиком: выручка периода, пока он\n"
+        "  числился на головной учётке, засчитана агенту, а не головной.")
     table(cur, BASE + """
         , cut as (select extract(day from d)::int as n,
                          date_trunc('month', d)::date as cur_m,
                          (date_trunc('month', d) - interval '1 month')::date as prev_m
                   from lastday)
-        select org,
-               round(coalesce(sum(amount) filter (where approved and ts <  cut.cur_m), 0), 0) as rev_prev,
-               round(coalesce(sum(amount) filter (where approved and ts >= cut.cur_m), 0), 0) as rev_cur,
-               round(coalesce(sum(amount) filter (where approved and ts >= cut.cur_m), 0)
-                     - coalesce(sum(amount) filter (where approved and ts < cut.cur_m), 0), 0) as delta,
-               count(distinct sn) filter (where approved and ts < cut.cur_m)  as terms_prev,
-               count(distinct sn) filter (where approved and ts >= cut.cur_m) as terms_cur
-        from fc, cut
-        where ts >= cut.prev_m and extract(day from ts) <= cut.n
+        select coalesce(o.org, fc.org) as org,
+               round(coalesce(sum(fc.amount) filter (where fc.approved and fc.ts <  cut.cur_m), 0), 0) as rev_prev,
+               round(coalesce(sum(fc.amount) filter (where fc.approved and fc.ts >= cut.cur_m), 0), 0) as rev_cur,
+               round(coalesce(sum(fc.amount) filter (where fc.approved and fc.ts >= cut.cur_m), 0)
+                     - coalesce(sum(fc.amount) filter (where fc.approved and fc.ts < cut.cur_m), 0), 0) as delta,
+               count(distinct fc.sn) filter (where fc.approved and fc.ts < cut.cur_m)  as terms_prev,
+               count(distinct fc.sn) filter (where fc.approved and fc.ts >= cut.cur_m) as terms_cur
+        from fc
+        left join owner o on o.sn = fc.sn
+        cross join cut
+        where fc.ts >= cut.prev_m and extract(day from fc.ts) <= cut.n
         group by 1
         order by 4 desc""", maxw=30)
 
@@ -573,6 +581,23 @@ def main():
                    or revenue < 0.75 * rev_ref
                    or revenue > 1.30 * rev_ref)
         order by day""", maxw=20)
+
+    # ── 15. не переоформленные с головной учётки ─────────────────────────────
+    head(f"15. ВИСЯТ НА ГОЛОВНОЙ УЧЁТКЕ '{HEAD_ORG}'")
+    say("  Терминал регистрируют на головную учётку, а на агента переоформляют")
+    say("  позже. Всё, что торгует отсюда дольше месяца — забытое оформление:")
+    say("  выручка и ошибки этих машин приписываются не тому владельцу.")
+    table(cur, BASE + f"""
+        select fc.sn, max(fc.loc) as loc,
+               min(fc.ts)::date                                   as first_sale,
+               max(fc.ts)::date                                   as last_sale,
+               (select d from lastday) - min(fc.ts)::date         as days_on_head,
+               count(*) filter (where fc.approved)                as payments,
+               round(sum(fc.amount) filter (where fc.approved), 0) as revenue_aed
+        from fc
+        join owner o on o.sn = fc.sn and o.org = '{HEAD_ORG}'
+        group by 1
+        order by 5 desc""", maxw=30)
 
     cur.close(); conn.close()
     with open(REPORT, "w", encoding="utf-8") as f:
