@@ -301,7 +301,7 @@ def main():
         say(f"  Новые терминалы с CE, которых не было в снимке: {len(new_t)}")
 
     # ── 4. сентябрь ───────────────────────────────────────────────────────────
-    head("4. СЕНТЯБРЬ — ЧЕГО В ПРОШЛОМ СНИМКЕ НЕ БЫЛО ВОВСЕ")
+    head("4. ПОСЛЕ СНИМКА ПО НЕДЕЛЯМ — ЧЕГО В СНИМКЕ НЕ БЫЛО ВОВСЕ")
     table(cur, BASE + """
         select to_char(date_trunc('week', ts), 'YYYY-MM-DD') as week,
                count(*) as attempts,
@@ -311,7 +311,8 @@ def main():
                round(100.0 * count(*) filter (where not approved) / count(*), 2) as decline_pct
         from fc where ts >= '2026-09-01' group by 1 order by 1""")
 
-    head("5. СЕНТЯБРЬ: CE ПО ОРГАНИЗАЦИЯМ И ТЕРМИНАЛАМ")
+    head("5. ПОСЛЕ СНИМКА: CE ПО ОРГАНИЗАЦИЯМ И ТЕРМИНАЛАМ")
+    say("  Весь период после базового снимка целиком, не один месяц.")
     table(cur, BASE + """
         select org, count(*) as attempts,
                count(*) filter (where not approved and code = 'CE') as ce,
@@ -348,7 +349,7 @@ def main():
                count(*) filter (where not approved and code = 'CE'
                     and ts >= '2026-08-01' and ts < '2026-09-01') as ce_aug,
                count(*) filter (where not approved and code = 'CE'
-                    and ts >= '2026-09-01') as ce_sep,
+                    and ts >= '2026-09-01') as ce_after,
                count(*) filter (where ts >= '2026-06-01') as attempts
         from fc where org = 'tazizi' and ts >= '2026-06-01'
         group by 1, 2
