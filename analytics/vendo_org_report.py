@@ -23,6 +23,11 @@ PGDATABASE = os.environ.get("PGDATABASE", "app")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ORG = os.environ.get("ORG", "tazizi")
+# owner  — вся история терминала относится к его текущему владельцу (по умолчанию);
+# vend   — старое поведение: по метке конкретной выдачи. Нужен, только чтобы
+#          воспроизвести отчёт, уже отправленный клиенту.
+OWNER_MODE = os.environ.get("OWNER_MODE", "owner")
+ORG_FILTER = ("o.org = %(org)s" if OWNER_MODE == "owner" else "f.org = %(org)s")
 MONTHS = int(os.environ.get("MONTHS", 3))
 REPORT = os.path.join(HERE, f"vendo_org_{ORG}_report.txt")
 
@@ -193,7 +198,17 @@ f as (
   join vendotek_unit u on u.id = v.unit_id
   left join vendotek_payment_cashless c on c.payment_id = p.id
 ),
-fc as (select * from f where org = %(org)s and not mistap)
+owner as (
+  -- Владелец терминала = метка по последней продаже. vendotek-uae — головная
+  -- учётка: на неё терминал регистрируют, на агента переоформляют позже,
+  -- поэтому фильтр по метке отдельной выдачи обрезает агенту начало истории.
+  select sn, (array_agg(org order by ts desc))[1] as org from f group by 1
+),
+fc as (
+  select f.* from f
+  join owner o on o.sn = f.sn
+  where {ORG_FILTER} and not f.mistap
+)
 """
 
 QUERIES = [
