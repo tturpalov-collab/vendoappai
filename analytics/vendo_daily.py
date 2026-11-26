@@ -599,6 +599,56 @@ def main():
         group by 1
         order by 5 desc""", maxw=30)
 
+    # ── 16. сетевые ошибки по дням с разбивкой по кодам ──────────────────────
+    head("16. СЕТЕВЫЕ ОШИБКИ ПО ДНЯМ, ТЕКУЩИЙ МЕСЯЦ")
+    say("  ce        — обрыв связи с хостом (подпись сетевой аварии)")
+    say("  timeout   — TO, хост не ответил в срок")
+    say("  host_down — 907 / 909 / 911, хост ответил «недоступен»")
+    say("              (подпись планового переезда: CE при этом почти не растёт)")
+    say("  no_answer — пустой код ответа")
+    say("  per_10k   — техотказов на 10 000 платежей, с ним и сравнивать дни")
+    table(cur, BASE + """
+        select ts::date                                            as day,
+               to_char(ts, 'Dy')                                   as dow,
+               count(*)                                            as pays,
+               count(*) filter (where not approved)                as declined,
+               count(*) filter (where not approved and code in """ + TECH + """) as tech,
+               count(*) filter (where not approved and code = 'CE')  as ce,
+               count(*) filter (where not approved and code = 'TO')  as timeout,
+               count(*) filter (where not approved
+                                      and code in ('907','909','911')) as host_down,
+               count(*) filter (where not approved and code = '')     as no_answer,
+               round(10000.0 * count(*) filter (where not approved
+                     and code in """ + TECH + """) / nullif(count(*), 0), 1) as per_10k,
+               count(distinct sn) filter (where not approved
+                     and code in """ + TECH + """ and sn <> '—')      as terms_hit
+        from fc, lastday
+        where ts >= date_trunc('month', lastday.d)
+        group by 1, 2
+        order by 1""", maxw=20)
+
+    # ── 17. кто ловит сетевые ошибки: терминалы за текущий месяц ─────────────
+    head("17. КТО ЛОВИТ СЕТЕВЫЕ ОШИБКИ: ТЕРМИНАЛЫ ЗА ТЕКУЩИЙ МЕСЯЦ")
+    say("  Доля важнее числа: машина с 20 отказами на 100 попыток хуже,")
+    say("  чем машина с 50 отказами на 10 000.")
+    table(cur, BASE + """
+        , t as (
+          select sn, (array_agg(loc order by ts desc))[1] as loc,
+                 (array_agg(org order by ts desc))[1]     as org,
+                 count(*)                                 as attempts,
+                 count(*) filter (where not approved and code in """ + TECH + """) as tech,
+                 count(*) filter (where not approved and code = 'CE')              as ce
+          from fc, lastday
+          where ts >= date_trunc('month', lastday.d) and sn <> '—'
+          group by 1
+        )
+        select sn, loc, org, attempts, tech, ce,
+               round(100.0 * tech / nullif(attempts, 0), 2) as tech_pct
+        from t
+        where tech > 0
+        order by tech_pct desc, tech desc
+        limit 20""", maxw=26)
+
     cur.close(); conn.close()
     with open(REPORT, "w", encoding="utf-8") as f:
         f.write("\n".join(out_lines))
