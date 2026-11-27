@@ -235,14 +235,18 @@ def main():
         from day_rows, d""", maxw=24)
 
     head("1. КАЖДЫЙ ОБРЫВ CE ОТДЕЛЬНОЙ СТРОКОЙ")
+    say("  vend_flag — сырое значение vendotek_vend.completed / .cancelled.")
+    say("  ВНИМАНИЕ: 'completed' НЕ доказывает, что товар выдан — это состояние")
+    say("  записи о выдаче, а не подтверждение, что из автомата что-то вышло.")
+    say("  Сверять с поведением покупателя в разделе 3.")
     table(cur, BASE + """
         select to_char(ts, 'HH24:MI:SS')  as time_,
                sn, loc, org,
                round(amount, 2)           as amount,
                card, entry, pan, issuer,
                txn_s, vend_s,
-               case when cancelled then 'отменена'
-                    when completed then 'выдана' else '—' end as vend
+               case when cancelled then 'cancelled'
+                    when completed then 'completed' else '—' end as vend_flag
         from day_rows
         where not approved and code = 'CE'
         order by ts""", maxw=22)
