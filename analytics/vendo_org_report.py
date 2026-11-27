@@ -211,6 +211,44 @@ fc as (
 )
 """
 
+PROBLEM = """
+, lastday as (select max(ts)::date as d from fc)
+, t as (
+  select fc.sn,
+         (array_agg(fc.loc order by fc.ts desc))[1]                  as loc,
+         max(fc.ts)::date                                            as last_sale,
+         (select d from lastday) - max(fc.ts)::date                  as days_silent,
+         count(*) filter (where fc.ts::date >  (select d from lastday) - 30) as att_30,
+         count(*) filter (where fc.approved
+                            and fc.ts::date >  (select d from lastday) - 30) as pays_30,
+         count(*) filter (where fc.approved
+                            and fc.ts::date <= (select d from lastday) - 30
+                            and fc.ts::date >  (select d from lastday) - 60) as pays_prev30,
+         count(*) filter (where fc.is_tech and not fc.approved
+                            and fc.ts::date >  (select d from lastday) - 30) as tech_30,
+         coalesce(sum(fc.amount) filter (where fc.approved
+                            and fc.ts::date >  (select d from lastday) - 30), 0) as rev_30,
+         coalesce(sum(fc.amount) filter (where fc.approved
+                            and fc.ts::date <= (select d from lastday) - 30
+                            and fc.ts::date >  (select d from lastday) - 60), 0) as rev_prev30
+  from fc group by 1
+)
+, prob as (
+  select t.*,
+         round(100.0 * tech_30 / nullif(att_30, 0), 1) as tech_pct,
+         case
+           -- молчит неделю и дольше: машину выключили, увезли или она мертва
+           when days_silent >= 7 then 'молчит'
+           -- каждая двадцатая попытка не доходит до хоста
+           when att_30 >= 30 and 100.0 * tech_30 / att_30 >= 5 then 'техотказы'
+           -- оборот упал больше чем на 40 процентов к предыдущему месяцу
+           when pays_prev30 >= 30 and pays_30 < 0.6 * pays_prev30 then 'падение оборота'
+           else 'норма'
+         end as problem
+  from t
+)
+"""
+
 QUERIES = [
 
 ("1. СВОДКА ПО МЕСЯЦАМ", BASE + """
@@ -387,6 +425,28 @@ select to_char(date_trunc('month', ts), 'YYYY-MM') as month,
        round(count(*) filter (where approved)::numeric
              / count(distinct sn) / count(distinct ts::date), 1) as payments_per_terminal_per_day
 from fc group by 1 order by 1"""),
+
+("18. ПРОБЛЕМНЫЕ ТЕРМИНАЛЫ: СВОДКА", BASE + PROBLEM + """
+select problem, count(*) as terminals,
+       round(sum(rev_30), 0)                       as revenue_30d,
+       round(sum(rev_prev30), 0)                   as revenue_prev30,
+       round(sum(rev_30) - sum(rev_prev30), 0)     as delta
+from prob
+group by 1
+order by case problem when 'молчит' then 1 when 'техотказы' then 2
+                      when 'падение оборота' then 3 else 4 end"""),
+
+("19. ПРОБЛЕМНЫЕ ТЕРМИНАЛЫ: СПИСОК", BASE + PROBLEM + """
+select problem, sn, loc, last_sale, days_silent,
+       pays_30, pays_prev30,
+       case when pays_prev30 > 0
+            then round(100.0 * pays_30 / pays_prev30 - 100, 0) end as pays_pct,
+       tech_30, tech_pct,
+       round(rev_30, 0) as revenue_30d
+from prob
+where problem <> 'норма'
+order by case problem when 'молчит' then 1 when 'техотказы' then 2 else 3 end,
+         rev_prev30 desc nulls last"""),
 ]
 
 def main():
